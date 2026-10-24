@@ -48,7 +48,6 @@
     </div>
 
     <div id="view-journal">
-        <!-- Панель переключения дней -->
         <div class="date-nav">
             <button class="btn-date" onclick="changeDate(-1)">← Вчера</button>
             <div class="current-date" id="date-display">Загрузка...</div>
@@ -117,34 +116,30 @@
         "Рахматулин Дамиил", "Остапук Маргарита", "Радьева Эмма"
     ];
     
-    // Теперь grades и absent будут хранить данные в формате: "Дата_Предмет_Ученик"
     let grades = {};
     let absent = {};
     let currentSubject = "Математика";
-    
-    // Текущая дата
     let currentDate = new Date();
     
+    // Расписание с субботой (там только 1 урок - классный час)
     let schedule = {
         'Понедельник': ['Физкультура', 'Математика', 'Трудовое обучение', 'Белорусский язык', '', '', ''],
         'Вторник': ['Трудовое обучение', 'Русский язык', 'Математика', 'Белорусский язык', '', '', ''],
         'Среда': ['Всемирная история', 'Математика', 'Физкультура', 'Русский язык', '', '', ''],
         'Четверг': ['Математика', 'Физкультура', 'Белорусский язык', 'ОБЖ', '', '', ''],
-        'Пятница': ['Русский язык', 'Белорусская литература', 'Математика', 'Классный час', '', '', '']
+        'Пятница': ['Русский язык', 'Белорусская литература', 'Математика', 'Классный час', '', '', ''],
+        'Суббота': ['Классный час'] // Только один урок
     };
 
-    // Функция получения строки даты (ГГГГ-ММ-ДД)
     function getDateString(date) {
         return date.toISOString().split('T')[0];
     }
 
-    // Обновление отображения даты
     function updateDateDisplay() {
         const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
         document.getElementById('date-display').innerText = currentDate.toLocaleDateString('ru-RU', options);
     }
 
-    // Переключение дня
     window.changeDate = function(days) {
         currentDate.setDate(currentDate.getDate() + days);
         updateDateDisplay();
@@ -184,7 +179,6 @@
         
         students.forEach((name, index) => {
             const tr = document.createElement('tr');
-            // Ключ теперь включает дату, предмет и имя
             const key = `${dateStr}_${currentSubject}_${name}`;
 
             tr.innerHTML = `<td>${index + 1}</td><td>${name}</td>`;
@@ -291,7 +285,6 @@
         alert('Расписание сохранено!');
     }
 
-    // Инициализация
     updateDateDisplay();
     renderTable();
 </script>
