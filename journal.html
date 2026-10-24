@@ -87,22 +87,29 @@
         .btn-add { padding: 0 30px; border: none; border-radius: 12px; background: var(--primary); color: white; font-weight: 700; font-size: 16px; cursor: pointer; transition: 0.2s; white-space: nowrap; }
         .btn-add:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(76, 81, 191, 0.3); }
 
-        /* Расписание и Рассадка */
-        .schedule-grid, .seating-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
-        .day-card, .desk { background: var(--card); border-radius: 16px; overflow: hidden; box-shadow: var(--shadow); }
+        /* Расписание */
+        .schedule-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+        .day-card { background: var(--card); border-radius: 16px; overflow: hidden; box-shadow: var(--shadow); }
         .day-title { background: var(--primary); color: white; padding: 15px 20px; font-weight: 800; }
         .day-content { padding: 20px; display: flex; flex-direction: column; gap: 12px; }
         .day-content input { padding: 12px; border: 2px solid var(--border); border-radius: 10px; background: var(--bg); color: var(--text); font-size: 15px; outline: none; transition: 0.2s; }
         .day-content input:focus { border-color: var(--primary); }
-        .desk { padding: 20px; border: 2px dashed var(--border); }
-        .desk-title { text-align: center; font-weight: 800; color: var(--text-muted); margin-bottom: 15px; text-transform: uppercase; font-size: 13px; }
-        .desk-slot { background: var(--bg); padding: 10px; border-radius: 10px; margin-bottom: 10px; display: flex; align-items: center; gap: 10px; }
-        .desk-slot span { font-weight: 800; color: var(--primary); font-size: 14px; }
-        .desk-slot select { width: 100%; padding: 8px; font-size: 14px; border-radius: 8px; border: 1px solid var(--border); }
+
+        /* РАССАДКА (3 ряда по 4 парты) */
+        .seating-rows { display: flex; flex-direction: column; gap: 30px; }
+        .seating-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+        .desk { background: var(--card); padding: 15px; border-radius: 16px; box-shadow: var(--shadow); border: 2px dashed var(--border); }
+        .desk-title { text-align: center; font-weight: 800; color: var(--text-muted); margin-bottom: 10px; text-transform: uppercase; font-size: 12px; }
+        .desk-slot { background: var(--bg); padding: 8px; border-radius: 8px; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+        .desk-slot span { font-weight: 800; color: var(--primary); font-size: 13px; }
+        .desk-slot select { width: 100%; padding: 6px; font-size: 13px; border-radius: 6px; border: 1px solid var(--border); }
 
         .toast { position: fixed; bottom: 30px; right: 30px; background: var(--primary); color: white; padding: 15px 25px; border-radius: 12px; font-weight: 700; box-shadow: var(--shadow); opacity: 0; transform: translateY(20px); transition: 0.3s; pointer-events: none; display: flex; align-items: center; gap: 10px; z-index: 1000; }
         .toast.show { opacity: 1; transform: translateY(0); }
 
+        @media (max-width: 1024px) {
+            .seating-row { grid-template-columns: repeat(2, 1fr); }
+        }
         @media (max-width: 768px) {
             .sidebar { width: 70px; }
             .sidebar .logo-area h2, .sidebar .nav-item span { display: none; }
@@ -116,6 +123,7 @@
             tr { display: flex; flex-direction: column; border-bottom: 2px solid var(--border); padding: 15px 0; background: var(--card); margin-bottom: 10px; border-radius: 12px; position: relative; }
             .grade-wrapper { margin-top: 10px; justify-content: flex-start; }
             td:last-child { position: absolute; right: 10px; top: 10px; }
+            .seating-row { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -133,6 +141,7 @@
 </div>
 
 <div class="main-content">
+    <!-- ЖУРНАЛ -->
     <div id="view-journal" class="view-section active">
         <div class="top-bar">
             <div class="date-nav">
@@ -167,6 +176,7 @@
         </div>
     </div>
 
+    <!-- РАСПИСАНИЕ -->
     <div id="view-schedule" class="view-section">
         <div class="top-bar">
             <h2 style="color: var(--primary);"><i class="fa-solid fa-calendar-days"></i> Расписание</h2>
@@ -175,12 +185,13 @@
         <div class="schedule-grid" id="schedule-list"></div>
     </div>
 
+    <!-- РАССАДКА (3 ряда по 4 парты) -->
     <div id="view-seating" class="view-section">
         <div class="top-bar">
-            <h2 style="color: var(--primary);"><i class="fa-solid fa-chair"></i> Рассадка</h2>
+            <h2 style="color: var(--primary);"><i class="fa-solid fa-chair"></i> Рассадка (12 парт)</h2>
             <button class="btn-add" onclick="saveSeating()"><i class="fa-solid fa-floppy-disk"></i> Сохранить</button>
         </div>
-        <div class="seating-grid" id="seating-list"></div>
+        <div class="seating-rows" id="seating-list"></div>
     </div>
 </div>
 
@@ -189,7 +200,6 @@
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-    // ВОТ ТУТ БЫЛА ОШИБКА, ТЕПЕРЬ onAuthStateChanged ИМПОРТИРОВАН ПРАВИЛЬНО
     import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
     const firebaseConfig = {
@@ -206,16 +216,11 @@
     const auth = getAuth(app);
     const docRef = doc(db, "journal", "class5a");
 
-    // ПРОВЕРКА ЛОГИНА (теперь работает)
     onAuthStateChanged(auth, (user) => {
-        if (!user) {
-            window.location.href = "index.html"; // Если не залогинен, выкидываем на вход
-        }
+        if (!user) { window.location.href = "index.html"; }
     });
 
-    window.logout = function() {
-        signOut(auth).then(() => { window.location.href = "index.html"; });
-    }
+    window.logout = function() { signOut(auth).then(() => { window.location.href = "index.html"; }); }
 
     let students = ["Борисов Андрей", "Виноградов Артём", "Гуков Димитрий", "Григорьев Александр", "Гроховский Давид", "Прокофьев Денис", "Смороеский Евгений", "Макачёва Ульяна", "Кожеметёнов Ина", "Рахматулин Дамиил", "Остапук Маргарита", "Радьева Эмма"];
     let grades = {}, absent = {}, currentSubject = "Математика", currentDate = new Date();
@@ -227,7 +232,9 @@
         'Пятница': ['Русский язык', 'Белорусская литература', 'Математика', 'Классный час', '', '', ''],
         'Суббота': ['Классный час'] 
     };
-    let seating = Array(6).fill().map((_, i) => ({ desk: i + 1, seat1: "", seat2: "" }));
+    
+    // ТЕПЕРЬ 12 ПАРТ
+    let seating = Array(12).fill().map((_, i) => ({ desk: i + 1, seat1: "", seat2: "" }));
 
     window.toggleTheme = function() {
         const body = document.body; const icon = document.getElementById('theme-icon');
@@ -307,22 +314,45 @@
         saveToCloud();
     }
 
+    // РАССАДКА (3 ряда по 4 парты)
     window.renderSeating = function() {
-        const container = document.getElementById('seating-list'); container.innerHTML = '';
-        seating.forEach((desk, index) => {
-            const div = document.createElement('div'); div.className = 'desk';
-            let html = `<div class="desk-title">Парта ${desk.desk}</div>`;
-            html += `<div class="desk-slot"><span>1:</span><select id="desk_${index}_1"><option value="">-- Пусто --</option>`;
-            students.forEach(s => { html += `<option value="${s}" ${desk.seat1 === s ? 'selected' : ''}>${s}</option>`; });
-            html += `</select></div><div class="desk-slot"><span>2:</span><select id="desk_${index}_2"><option value="">-- Пусто --</option>`;
-            students.forEach(s => { html += `<option value="${s}" ${desk.seat2 === s ? 'selected' : ''}>${s}</option>`; });
-            html += `</select></div>`;
-            div.innerHTML = html; container.appendChild(div);
-        });
+        const container = document.getElementById('seating-list'); 
+        container.innerHTML = '';
+        
+        // Создаем 3 ряда
+        for (let row = 0; row < 3; row++) {
+            const rowDiv = document.createElement('div');
+            rowDiv.className = 'seating-row';
+            
+            // В каждом ряду по 4 парты
+            for (let col = 0; col < 4; col++) {
+                const deskIndex = row * 4 + col; // Индекс парты от 0 до 11
+                const desk = seating[deskIndex];
+                
+                const deskDiv = document.createElement('div');
+                deskDiv.className = 'desk';
+                
+                let html = `<div class="desk-title">Парта ${desk.desk}</div>`;
+                html += `<div class="desk-slot"><span>1:</span><select id="desk_${deskIndex}_1"><option value="">-- Пусто --</option>`;
+                students.forEach(s => { html += `<option value="${s}" ${desk.seat1 === s ? 'selected' : ''}>${s}</option>`; });
+                html += `</select></div>`;
+                
+                html += `<div class="desk-slot"><span>2:</span><select id="desk_${deskIndex}_2"><option value="">-- Пусто --</option>`;
+                students.forEach(s => { html += `<option value="${s}" ${desk.seat2 === s ? 'selected' : ''}>${s}</option>`; });
+                html += `</select></div>`;
+                
+                deskDiv.innerHTML = html;
+                rowDiv.appendChild(deskDiv);
+            }
+            container.appendChild(rowDiv);
+        }
     }
 
     window.saveSeating = function() {
-        seating.forEach((desk, index) => { desk.seat1 = document.getElementById(`desk_${index}_1`).value; desk.seat2 = document.getElementById(`desk_${index}_2`).value; });
+        seating.forEach((desk, index) => { 
+            desk.seat1 = document.getElementById(`desk_${index}_1`).value; 
+            desk.seat2 = document.getElementById(`desk_${index}_2`).value; 
+        });
         saveToCloud();
     }
 
