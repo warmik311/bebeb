@@ -11,24 +11,40 @@
         h1 { color: #4c51bf; margin-bottom: 30px; font-weight: 800; }
         input { width: 100%; padding: 15px; margin-bottom: 15px; border: 2px solid #e2e8f0; border-radius: 12px; font-size: 16px; box-sizing: border-box; outline: none; transition: 0.2s; }
         input:focus { border-color: #4c51bf; }
-        button { width: 100%; padding: 15px; background: #4c51bf; color: white; border: none; border-radius: 12px; font-size: 18px; font-weight: 700; cursor: pointer; transition: 0.2s; }
+        button { width: 100%; padding: 15px; background: #4c51bf; color: white; border: none; border-radius: 12px; font-size: 18px; font-weight: 700; cursor: pointer; transition: 0.2s; margin-bottom: 10px; }
         button:hover { background: #434190; transform: translateY(-2px); }
+        .btn-link { background: none; color: #4c51bf; font-size: 14px; padding: 5px; margin: 0; text-decoration: underline; }
+        .btn-link:hover { background: none; transform: none; }
         #error-msg { color: #e53e3e; margin-top: 10px; font-weight: 600; font-size: 14px; display: none; }
+        #reset-section { display: none; }
+        #reset-msg { margin-top: 15px; font-weight: 600; font-size: 14px; display: none; }
     </style>
 </head>
 <body>
 
 <div class="login-box">
-    <h1>📖 Вход в 5 "А"</h1>
-    <input type="email" id="email" placeholder="Ваша почта (например, teacher@mail.ru)">
-    <input type="password" id="password" placeholder="Пароль">
-    <button onclick="login()">Войти</button>
-    <div id="error-msg"></div>
+    <div id="login-section">
+        <h1>📖 Вход в 5 "А"</h1>
+        <input type="email" id="email" placeholder="Ваша почта">
+        <input type="password" id="password" placeholder="Пароль">
+        <button onclick="login()">Войти</button>
+        <button class="btn-link" onclick="showReset()">Забыли пароль?</button>
+        <div id="error-msg"></div>
+    </div>
+
+    <div id="reset-section">
+        <h1>🔑 Восстановление</h1>
+        <p style="font-size: 14px; color: #718096; margin-bottom: 20px;">Введите почту, и мы отправим ссылку.</p>
+        <input type="email" id="reset-email" placeholder="Ваша почта">
+        <button onclick="resetPassword()">Отправить ссылку</button>
+        <button class="btn-link" onclick="hideReset()">Назад ко входу</button>
+        <div id="reset-msg"></div>
+    </div>
 </div>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { getAuth, signInWithEmailAndPassword, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyC1v7Ao25hITuwonTkD9e2CgQiu8BxrepI",
@@ -42,17 +58,16 @@
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
 
-    // Если пользователь уже вошел, сразу кидаем в журнал
-    onAuthStateChanged(auth, (user) => {
-        if (user) {
-            window.location.href = "journal.html"; 
-        }
-    });
-
     window.login = async function() {
         const email = document.getElementById('email').value;
         const password = document.getElementById('password').value;
         const errorDiv = document.getElementById('error-msg');
+
+        if (!email || !password) {
+            errorDiv.style.display = 'block';
+            errorDiv.innerText = "Заполните все поля!";
+            return;
+        }
 
         try {
             await signInWithEmailAndPassword(auth, email, password);
@@ -60,6 +75,34 @@
         } catch (error) {
             errorDiv.style.display = 'block';
             errorDiv.innerText = "Ошибка: неверная почта или пароль!";
+        }
+    }
+
+    window.showReset = function() {
+        document.getElementById('login-section').style.display = 'none';
+        document.getElementById('reset-section').style.display = 'block';
+        document.getElementById('error-msg').style.display = 'none';
+    }
+
+    window.hideReset = function() {
+        document.getElementById('login-section').style.display = 'block';
+        document.getElementById('reset-section').style.display = 'none';
+        document.getElementById('reset-msg').style.display = 'none';
+    }
+
+    window.resetPassword = async function() {
+        const email = document.getElementById('reset-email').value;
+        const msgDiv = document.getElementById('reset-msg');
+        
+        try {
+            await sendPasswordResetEmail(auth, email);
+            msgDiv.style.display = 'block';
+            msgDiv.style.color = '#38a169';
+            msgDiv.innerText = "Письмо отправлено! Проверьте почту.";
+        } catch (error) {
+            msgDiv.style.display = 'block';
+            msgDiv.style.color = '#e53e3e';
+            msgDiv.innerText = "Ошибка: проверьте правильность почты.";
         }
     }
 </script>
