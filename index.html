@@ -5,210 +5,59 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Журнал 5 "А"</title>
     <style>
-        :root {
-            --bg: #f5f7fa;
-            --card: #ffffff;
-            --primary: #2c3e50;
-            --accent: #3498db;
-            --text: #333;
-            --border: #dce1e6;
-            --grade-5: #27ae60;
-            --grade-4: #2980b9;
-            --grade-3: #f39c12;
-            --grade-2: #c0392b;
-            --absent: #95a5a6;
-        }
-
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Arial, sans-serif; }
-
-        body {
-            background-color: var(--bg);
-            padding: 15px;
-            display: flex;
-            justify-content: center;
-        }
-
-        .journal-container {
-            width: 100%;
-            max-width: 1100px;
-            background: var(--card);
-            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-            border-radius: 8px;
-            overflow: hidden;
-        }
-
+        body { font-family: Arial, sans-serif; background: #f0f2f5; margin: 0; padding: 20px; }
+        .container { max-width: 900px; margin: 0 auto; background: white; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); overflow: hidden; }
+        
         /* Вкладки */
-        .tabs {
-            display: flex;
-            background: #f0f2f5;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .tab {
-            padding: 14px 24px;
-            font-size: 15px;
-            font-weight: 600;
-            color: #7f8c8d;
-            cursor: pointer;
-            border: none;
-            background: none;
-            transition: 0.2s;
-        }
-
-        .tab.active {
-            background: var(--card);
-            color: var(--primary);
-            border-bottom: 2px solid var(--accent);
-        }
+        .tabs { display: flex; background: #e9ecef; }
+        .tab { padding: 15px 25px; border: none; background: none; font-size: 16px; font-weight: bold; color: #555; cursor: pointer; }
+        .tab.active { background: white; color: #0056b3; border-bottom: 3px solid #0056b3; }
 
         /* Шапка */
-        .header {
-            background: var(--primary);
-            color: white;
-            padding: 16px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-
-        .header h1 { font-size: 20px; }
-
-        select {
-            padding: 8px 12px;
-            font-size: 15px;
-            border-radius: 4px;
-            border: none;
-            background: white;
-            color: var(--primary);
-            font-weight: 600;
-            cursor: pointer;
-            outline: none;
-        }
-
-        /* Таблица */
-        .table-wrapper { overflow-x: auto; }
-        table { width: 100%; border-collapse: collapse; min-width: 650px; }
-        th, td { padding: 10px; text-align: center; border: 1px solid var(--border); }
-        th { background: #f8f9fa; color: var(--primary); font-weight: 600; font-size: 13px; text-transform: uppercase; }
-        td:nth-child(2) { text-align: left; font-weight: 500; padding-left: 15px; }
+        .header { background: #003366; color: white; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; }
+        select { padding: 8px; border-radius: 4px; border: none; font-weight: bold; font-size: 14px; }
         
-        tr:nth-child(even) { background-color: #fcfcfc; }
-        tr:hover { background-color: #f1f4f7; }
+        /* Таблица */
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 12px; border-bottom: 1px solid #ddd; text-align: center; }
+        th { background: #f8f9fa; color: #333; font-size: 14px; }
+        td:nth-child(2) { text-align: left; font-weight: bold; }
 
         /* Оценки */
-        .grade-input {
-            width: 50px;
-            height: 38px;
-            text-align: center;
-            font-size: 17px;
-            font-weight: bold;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            outline: none;
-            transition: 0.2s;
-        }
-        .grade-input:focus { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2); }
+        .grade-box { display: flex; justify-content: center; gap: 5px; }
+        .input-grade { width: 45px; height: 35px; text-align: center; font-size: 18px; font-weight: bold; border: 1px solid #ccc; border-radius: 4px; }
         
-        /* Кнопка Н */
-        .btn-absent {
-            width: 38px;
-            height: 38px;
-            margin-left: 5px;
-            border: 1px solid #ccc;
-            background: #f8f9fa;
-            border-radius: 4px;
-            font-weight: bold;
-            cursor: pointer;
-            color: #7f8c8d;
-            transition: 0.2s;
-        }
-        .btn-absent.active { background: var(--absent); color: white; border-color: var(--absent); }
-
-        /* Форма */
-        .add-form {
-            padding: 15px;
-            background: #f8f9fa;
-            border-top: 1px solid var(--border);
-            display: flex;
-            gap: 10px;
-        }
-        .add-form input {
-            flex: 1;
-            padding: 10px;
-            border: 1px solid var(--border);
-            border-radius: 4px;
-            font-size: 15px;
-        }
-        .btn-add {
-            padding: 10px 20px;
-            background: var(--accent);
-            color: white;
-            border: none;
-            border-radius: 4px;
-            font-size: 15px;
-            font-weight: 600;
-            cursor: pointer;
-        }
+        /* Кнопки */
+        .btn-n { width: 40px; height: 35px; border: none; border-radius: 4px; background: #e74c3c; color: white; font-weight: bold; cursor: pointer; }
+        .btn-n.active { background: #c0392b; }
+        .btn-del { background: none; border: none; color: #e74c3c; font-size: 18px; cursor: pointer; }
+        
+        /* Форма добавления */
+        .add-form { padding: 15px; background: #f8f9fa; display: flex; gap: 10px; border-top: 1px solid #ddd; }
+        .add-form input { flex: 1; padding: 10px; border: 1px solid #ccc; border-radius: 4px; }
+        .btn-add { padding: 10px 20px; background: #28a745; color: white; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; }
 
         /* Расписание */
-        .schedule-content { display: none; padding: 20px; }
-        .day-card {
-            margin-bottom: 15px;
-            border: 1px solid var(--border);
-            border-radius: 4px;
-            overflow: hidden;
-        }
-        .day-title {
-            background: #ecf0f1;
-            padding: 10px 15px;
-            font-weight: 600;
-            color: var(--primary);
-            border-bottom: 1px solid var(--border);
-        }
-        .day-inputs {
-            padding: 15px;
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-        .day-inputs input {
-            flex: 1;
-            min-width: 120px;
-            padding: 8px;
-            border: 1px solid var(--border);
-            border-radius: 4px;
-        }
-
-        .toast {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: #27ae60;
-            color: white;
-            padding: 10px 20px;
-            border-radius: 4px;
-            opacity: 0;
-            transition: opacity 0.3s;
-            pointer-events: none;
-            font-weight: 600;
-        }
+        .schedule { display: none; padding: 20px; }
+        .day-card { margin-bottom: 15px; border: 1px solid #ddd; border-radius: 5px; overflow: hidden; }
+        .day-title { background: #e9ecef; padding: 10px; font-weight: bold; }
+        .day-content { padding: 10px; display: flex; gap: 10px; flex-wrap: wrap; }
+        .day-content input { flex: 1; padding: 8px; border: 1px solid #ccc; border-radius: 4px; }
     </style>
 </head>
 <body>
 
-<div class="journal-container">
+<div class="container">
     <div class="tabs">
-        <button class="tab active" onclick="switchTab('journal')">Журнал</button>
-        <button class="tab" onclick="switchTab('schedule')">Расписание</button>
+        <button class="tab active" onclick="showTab('journal')">Журнал</button>
+        <button class="tab" onclick="showTab('schedule')">Расписание</button>
     </div>
 
-    <!-- ВКЛАДКА ЖУРНАЛ -->
-    <div id="journal-view">
+    <!-- ЖУРНАЛ -->
+    <div id="view-journal">
         <div class="header">
-            <h1>📖 Журнал 5 "А"</h1>
-            <select id="subject-select" onchange="changeSubject()">
+            <span style="font-size: 20px; font-weight: bold;">📖 Журнал 5 "А"</span>
+            <select id="subject" onchange="changeSubject()">
                 <option value="Математика">Математика</option>
                 <option value="Русский язык">Русский язык</option>
                 <option value="Белорусский язык">Белорусский язык</option>
@@ -218,19 +67,182 @@
                 <option value="Классный час">Классный час</option>
             </select>
         </div>
-
-        <div class="table-wrapper">
-            <table>
-                <thead>
-                    <tr>
-                        <th style="width: 40px;">№</th>
-                        <th>Фамилия Имя</th>
-                        <th style="width: 130px;">Оценка / Н</th>
-                        <th style="width: 40px;"></th>
-                    </tr>
-                </thead>
-                <tbody id="students-body"></tbody>
-            </table>
-        </div>
-
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 40px;">№</th>
+                    <th>Фамилия Имя</th>
+                    <th style="width: 130px;">Оценка</th>
+                    <th style="width: 40px;"></th>
+                </tr>
+            </thead>
+            <tbody id="table-body"></tbody>
+        </table>
         <div class="add-form">
+            <input type="text" id="new-name" placeholder="Добавить ученика (Фамилия Имя)">
+            <button class="btn-add" onclick="addStudent()">Добавить</button>
+        </div>
+    </div>
+
+    <!-- РАСПИСАНИЕ -->
+    <div id="view-schedule" class="schedule">
+        <div id="schedule-list"></div>
+        <button class="btn-add" style="width: 100%;" onclick="saveSchedule()">Сохранить расписание</button>
+    </div>
+</div>
+
+<script>
+    // Данные
+    let students = JSON.parse(localStorage.getItem('students')) || [
+        "Борисов Андрей", "Виноградов Артём", "Гуков Димитрий", 
+        "Григорьев Александр", "Гроховский Давид", "Прокофьев Денис",
+        "Смороеский Евгений", "Макачёва Ульяна", "Кожеметёнов Ина",
+        "Рахматулин Дамиил", "Остапук Маргарита", "Радьева Эмма"
+    ];
+    
+    let grades = JSON.parse(localStorage.getItem('grades')) || {};
+    let absent = JSON.parse(localStorage.getItem('absent')) || {};
+    let currentSubject = "Математика";
+
+    let schedule = JSON.parse(localStorage.getItem('schedule')) || {
+        'Понедельник': ['Физкультура', 'Математика', 'Трудовое обучение', 'Белорусский язык'],
+        'Вторник': ['Трудовое обучение', 'Русский язык', 'Математика', 'Белорусский язык'],
+        'Среда': ['Всемирная история', 'Математика', 'Физкультура', 'Русский язык'],
+        'Четверг': ['Математика', 'Физкультура', 'Белорусский язык', 'ОБЖ'],
+        'Пятница': ['Русский язык', 'Белорусская литература', 'Математика', 'Классный час']
+    };
+
+    // Сохранение
+    function save() {
+        localStorage.setItem('students', JSON.stringify(students));
+        localStorage.setItem('grades', JSON.stringify(grades));
+        localStorage.setItem('absent', JSON.stringify(absent));
+    }
+
+    // Отрисовка таблицы
+    function renderTable() {
+        const tbody = document.getElementById('table-body');
+        tbody.innerHTML = '';
+        
+        students.forEach((name, index) => {
+            const tr = document.createElement('tr');
+            const key = name + '_' + currentSubject;
+
+            // № и Имя
+            tr.innerHTML = `<td>${index + 1}</td><td>${name}</td>`;
+
+            // Оценка и Н
+            const tdGrade = document.createElement('td');
+            tdGrade.innerHTML = `
+                <div class="grade-box">
+                    <input type="text" class="input-grade" maxlength="1" value="${grades[key] || ''}" 
+                        oninput="updateGrade('${name}', this.value)">
+                    <button class="btn-n ${absent[key] ? 'active' : ''}" onclick="toggleAbsent('${name}')">Н</button>
+                </div>
+            `;
+            tr.appendChild(tdGrade);
+
+            // Удалить
+            const tdDel = document.createElement('td');
+            tdDel.innerHTML = `<button class="btn-del" onclick="deleteStudent(${index})">✖</button>`;
+            tr.appendChild(tdDel);
+
+            tbody.appendChild(tr);
+        });
+    }
+
+    // Обновление оценки
+    function updateGrade(name, value) {
+        const key = name + '_' + currentSubject;
+        grades[key] = value;
+        if (value) absent[key] = false; // Если есть оценка, убираем Н
+        save();
+        renderTable();
+    }
+
+    // Переключение Н
+    function toggleAbsent(name) {
+        const key = name + '_' + currentSubject;
+        absent[key] = !absent[key];
+        if (absent[key]) grades[key] = ''; // Если Н, стираем оценку
+        save();
+        renderTable();
+    }
+
+    // Смена предмета
+    function changeSubject() {
+        currentSubject = document.getElementById('subject').value;
+        renderTable();
+    }
+
+    // Добавление ученика
+    function addStudent() {
+        const input = document.getElementById('new-name');
+        if (input.value.trim() !== '') {
+            students.push(input.value.trim());
+            input.value = '';
+            save();
+            renderTable();
+        }
+    }
+
+    // Удаление ученика
+    function deleteStudent(index) {
+        if (confirm('Удалить ученика?')) {
+            students.splice(index, 1);
+            save();
+            renderTable();
+        }
+    }
+
+    // Вкладки
+    function showTab(tabName) {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        if (tabName === 'journal') {
+            document.querySelectorAll('.tab')[0].classList.add('active');
+            document.getElementById('view-journal').style.display = 'block';
+            document.getElementById('view-schedule').style.display = 'none';
+        } else {
+            document.querySelectorAll('.tab')[1].classList.add('active');
+            document.getElementById('view-journal').style.display = 'none';
+            document.getElementById('view-schedule').style.display = 'block';
+            renderSchedule();
+        }
+    }
+
+    // Отрисовка расписания
+    function renderSchedule() {
+        const container = document.getElementById('schedule-list');
+        container.innerHTML = '';
+        
+        for (let day in schedule) {
+            const div = document.createElement('div');
+            div.className = 'day-card';
+            
+            let html = `<div class="day-title">${day}</div><div class="day-content">`;
+            schedule[day].forEach((subj, i) => {
+                html += `<input type="text" id="s_${day}_${i}" value="${subj}">`;
+            });
+            html += `</div>`;
+            
+            div.innerHTML = html;
+            container.appendChild(div);
+        }
+    }
+
+    // Сохранение расписания
+    function saveSchedule() {
+        for (let day in schedule) {
+            schedule[day].forEach((_, i) => {
+                schedule[day][i] = document.getElementById(`s_${day}_${i}`).value;
+            });
+        }
+        localStorage.setItem('schedule', JSON.stringify(schedule));
+        alert('Расписание сохранено!');
+    }
+
+    // Запуск
+    renderTable();
+</script>
+</body>
+</html>
