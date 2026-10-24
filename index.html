@@ -7,42 +7,36 @@
     <style>
         body { font-family: Arial, sans-serif; background: #f0f2f5; margin: 0; padding: 20px; }
         .container { max-width: 900px; margin: 0 auto; background: white; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); overflow: hidden; }
-        
-        /* Вкладки */
         .tabs { display: flex; background: #e9ecef; }
         .tab { padding: 15px 25px; border: none; background: none; font-size: 16px; font-weight: bold; color: #555; cursor: pointer; }
         .tab.active { background: white; color: #0056b3; border-bottom: 3px solid #0056b3; }
+        
+        /* Панель дней */
+        .date-nav { display: flex; justify-content: space-between; align-items: center; background: #f8f9fa; padding: 10px 20px; border-bottom: 1px solid #ddd; }
+        .btn-date { padding: 8px 15px; background: white; border: 1px solid #ccc; border-radius: 4px; cursor: pointer; font-weight: bold; color: #333; transition: 0.2s; }
+        .btn-date:hover { background: #e2e6ea; }
+        .current-date { font-size: 18px; font-weight: bold; color: #003366; }
 
-        /* Шапка */
         .header { background: #003366; color: white; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; }
         select { padding: 8px; border-radius: 4px; border: none; font-weight: bold; font-size: 14px; }
-        
-        /* Таблица */
         table { width: 100%; border-collapse: collapse; }
         th, td { padding: 12px; border-bottom: 1px solid #ddd; text-align: center; }
         th { background: #f8f9fa; color: #333; font-size: 14px; }
         td:nth-child(2) { text-align: left; font-weight: bold; }
-
-        /* Оценки */
         .grade-box { display: flex; justify-content: center; gap: 5px; }
         .input-grade { width: 45px; height: 35px; text-align: center; font-size: 18px; font-weight: bold; border: 1px solid #ccc; border-radius: 4px; }
-        
-        /* Кнопки */
         .btn-n { width: 40px; height: 35px; border: none; border-radius: 4px; background: #e74c3c; color: white; font-weight: bold; cursor: pointer; }
         .btn-n.active { background: #c0392b; }
         .btn-del { background: none; border: none; color: #e74c3c; font-size: 18px; cursor: pointer; }
-        
-        /* Форма добавления */
         .add-form { padding: 15px; background: #f8f9fa; display: flex; gap: 10px; border-top: 1px solid #ddd; }
         .add-form input { flex: 1; padding: 10px; border: 1px solid #ccc; border-radius: 4px; }
         .btn-add { padding: 10px 20px; background: #28a745; color: white; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; }
-
-        /* Расписание */
         .schedule { display: none; padding: 20px; }
         .day-card { margin-bottom: 15px; border: 1px solid #ddd; border-radius: 5px; overflow: hidden; }
         .day-title { background: #e9ecef; padding: 10px; font-weight: bold; }
         .day-content { padding: 10px; display: flex; gap: 10px; flex-wrap: wrap; }
         .day-content input { flex: 1; min-width: 100px; padding: 8px; border: 1px solid #ccc; border-radius: 4px; }
+        .status { position: fixed; bottom: 10px; right: 10px; background: #333; color: white; padding: 5px 10px; border-radius: 4px; font-size: 12px; opacity: 0; transition: 0.3s; }
     </style>
 </head>
 <body>
@@ -53,10 +47,16 @@
         <button class="tab" onclick="showTab('schedule')">Расписание</button>
     </div>
 
-    <!-- ЖУРНАЛ -->
     <div id="view-journal">
+        <!-- Панель переключения дней -->
+        <div class="date-nav">
+            <button class="btn-date" onclick="changeDate(-1)">← Вчера</button>
+            <div class="current-date" id="date-display">Загрузка...</div>
+            <button class="btn-date" onclick="changeDate(1)">Завтра →</button>
+        </div>
+
         <div class="header">
-            <span style="font-size: 20px; font-weight: bold;">📖 Журнал 5 "А"</span>
+            <span style="font-size: 20px; font-weight: bold;">📖 Журнал</span>
             <select id="subject" onchange="changeSubject()">
                 <option value="Математика">Математика</option>
                 <option value="Русский язык">Русский язык</option>
@@ -84,28 +84,48 @@
         </div>
     </div>
 
-    <!-- РАСПИСАНИЕ -->
     <div id="view-schedule" class="schedule">
         <div id="schedule-list"></div>
         <button class="btn-add" style="width: 100%;" onclick="saveSchedule()">Сохранить расписание</button>
     </div>
 </div>
 
-<script>
-    // Данные
-    let students = JSON.parse(localStorage.getItem('students')) || [
+<div class="status" id="status">Синхронизация...</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyC1v7Ao25hITuwonTkD9e2CgQiu8BxrepI",
+        authDomain: "journal-project-acb3e.firebaseapp.com",
+        projectId: "journal-project-acb3e",
+        storageBucket: "journal-project-acb3e.firebasestorage.app",
+        messagingSenderId: "704481815245",
+        appId: "1:704481815245:web:af7f8c3ae4233011775784",
+        measurementId: "G-DGTVD2198V"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const docRef = doc(db, "journal", "class5a");
+
+    let students = [
         "Борисов Андрей", "Виноградов Артём", "Гуков Димитрий", 
         "Григорьев Александр", "Гроховский Давид", "Прокофьев Денис",
         "Смороеский Евгений", "Макачёва Ульяна", "Кожеметёнов Ина",
         "Рахматулин Дамиил", "Остапук Маргарита", "Радьева Эмма"
     ];
     
-    let grades = JSON.parse(localStorage.getItem('grades')) || {};
-    let absent = JSON.parse(localStorage.getItem('absent')) || {};
+    // Теперь grades и absent будут хранить данные в формате: "Дата_Предмет_Ученик"
+    let grades = {};
+    let absent = {};
     let currentSubject = "Математика";
-
-    // ТЕПЕРЬ ПО 7 УРОКОВ В КАЖДОМ ДНЕ
-    let schedule = JSON.parse(localStorage.getItem('schedule')) || {
+    
+    // Текущая дата
+    let currentDate = new Date();
+    
+    let schedule = {
         'Понедельник': ['Физкультура', 'Математика', 'Трудовое обучение', 'Белорусский язык', '', '', ''],
         'Вторник': ['Трудовое обучение', 'Русский язык', 'Математика', 'Белорусский язык', '', '', ''],
         'Среда': ['Всемирная история', 'Математика', 'Физкультура', 'Русский язык', '', '', ''],
@@ -113,21 +133,59 @@
         'Пятница': ['Русский язык', 'Белорусская литература', 'Математика', 'Классный час', '', '', '']
     };
 
-    // Сохранение
-    function save() {
-        localStorage.setItem('students', JSON.stringify(students));
-        localStorage.setItem('grades', JSON.stringify(grades));
-        localStorage.setItem('absent', JSON.stringify(absent));
+    // Функция получения строки даты (ГГГГ-ММ-ДД)
+    function getDateString(date) {
+        return date.toISOString().split('T')[0];
     }
 
-    // Отрисовка таблицы
-    function renderTable() {
+    // Обновление отображения даты
+    function updateDateDisplay() {
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        document.getElementById('date-display').innerText = currentDate.toLocaleDateString('ru-RU', options);
+    }
+
+    // Переключение дня
+    window.changeDate = function(days) {
+        currentDate.setDate(currentDate.getDate() + days);
+        updateDateDisplay();
+        renderTable();
+    }
+
+    onSnapshot(docRef, (docSnap) => {
+        if (docSnap.exists()) {
+            const data = docSnap.data();
+            if (data.students) students = data.students;
+            if (data.grades) grades = data.grades;
+            if (data.absent) absent = data.absent;
+            if (data.schedule) schedule = data.schedule;
+            renderTable();
+        } else {
+            saveToCloud();
+        }
+    });
+
+    async function saveToCloud() {
+        const status = document.getElementById('status');
+        status.style.opacity = '1';
+        try {
+            await setDoc(docRef, { students, grades, absent, schedule });
+            status.innerText = "Сохранено ✓";
+            setTimeout(() => status.style.opacity = '0', 1500);
+        } catch (e) {
+            status.innerText = "Ошибка!";
+            console.error(e);
+        }
+    }
+
+    window.renderTable = function() {
         const tbody = document.getElementById('table-body');
         tbody.innerHTML = '';
+        const dateStr = getDateString(currentDate);
         
         students.forEach((name, index) => {
             const tr = document.createElement('tr');
-            const key = name + '_' + currentSubject;
+            // Ключ теперь включает дату, предмет и имя
+            const key = `${dateStr}_${currentSubject}_${name}`;
 
             tr.innerHTML = `<td>${index + 1}</td><td>${name}</td>`;
 
@@ -149,48 +207,48 @@
         });
     }
 
-    // Обновление оценки
-    function updateGrade(name, value) {
-        const key = name + '_' + currentSubject;
+    window.updateGrade = function(name, value) {
+        const dateStr = getDateString(currentDate);
+        const key = `${dateStr}_${currentSubject}_${name}`;
         grades[key] = value;
         if (value) absent[key] = false; 
-        save();
+        saveToCloud();
         renderTable();
     }
 
-    // Переключение Н
-    function toggleAbsent(name) {
-        const key = name + '_' + currentSubject;
+    window.toggleAbsent = function(name) {
+        const dateStr = getDateString(currentDate);
+        const key = `${dateStr}_${currentSubject}_${name}`;
         absent[key] = !absent[key];
         if (absent[key]) grades[key] = ''; 
-        save();
+        saveToCloud();
         renderTable();
     }
 
-    function changeSubject() {
+    window.changeSubject = function() {
         currentSubject = document.getElementById('subject').value;
         renderTable();
     }
 
-    function addStudent() {
+    window.addStudent = function() {
         const input = document.getElementById('new-name');
         if (input.value.trim() !== '') {
             students.push(input.value.trim());
             input.value = '';
-            save();
+            saveToCloud();
             renderTable();
         }
     }
 
-    function deleteStudent(index) {
+    window.deleteStudent = function(index) {
         if (confirm('Удалить ученика?')) {
             students.splice(index, 1);
-            save();
+            saveToCloud();
             renderTable();
         }
     }
 
-    function showTab(tabName) {
+    window.showTab = function(tabName) {
         document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
         if (tabName === 'journal') {
             document.querySelectorAll('.tab')[0].classList.add('active');
@@ -204,8 +262,7 @@
         }
     }
 
-    // Отрисовка расписания (теперь по 7 полей)
-    function renderSchedule() {
+    window.renderSchedule = function() {
         const container = document.getElementById('schedule-list');
         container.innerHTML = '';
         
@@ -224,17 +281,18 @@
         }
     }
 
-    function saveSchedule() {
+    window.saveSchedule = function() {
         for (let day in schedule) {
             schedule[day].forEach((_, i) => {
                 schedule[day][i] = document.getElementById(`s_${day}_${i}`).value;
             });
         }
-        localStorage.setItem('schedule', JSON.stringify(schedule));
+        saveToCloud();
         alert('Расписание сохранено!');
     }
 
-    // Запуск
+    // Инициализация
+    updateDateDisplay();
     renderTable();
 </script>
 </body>
