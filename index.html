@@ -99,7 +99,6 @@
             .date-nav { justify-content: space-between; width: 100%; }
             .date-text { font-size: 16px; min-width: auto; }
             select { width: 100%; }
-            
             th { display: none; }
             td { display: block; border: none; padding: 5px 15px; text-align: left; }
             tr { display: flex; flex-direction: column; border-bottom: 2px solid var(--border); padding: 15px 0; background: var(--card); margin-bottom: 10px; border-radius: 12px; position: relative; }
@@ -216,7 +215,8 @@
         'Суббота': ['Классный час'] 
     };
 
-    let seating = JSON.parse(localStorage.getItem('seating')) || [
+    // Убрали localStorage, теперь данные только в Firebase
+    let seating = [
         { desk: 1, seat1: "", seat2: "" },
         { desk: 2, seat1: "", seat2: "" },
         { desk: 3, seat1: "", seat2: "" },
@@ -264,6 +264,7 @@
             if (data.grades) grades = data.grades;
             if (data.absent) absent = data.absent;
             if (data.schedule) schedule = data.schedule;
+            if (data.seating) seating = data.seating; // Загружаем рассадку из облака
             renderTable();
         } else {
             saveToCloud();
@@ -272,7 +273,7 @@
 
     async function saveToCloud() {
         try {
-            await setDoc(docRef, { students, grades, absent, schedule });
+            await setDoc(docRef, { students, grades, absent, schedule, seating });
             showToast();
         } catch (e) { console.error(e); }
     }
@@ -351,6 +352,4 @@
     }
 
     window.showTab = function(tabName, element) {
-        document.querySelectorAll('.nav-item').forEach(t => t.classList.remove('active'));
-        element.classList.add('active');
-        document.querySel
+        document.querySelectorAll('.nav-item').forEach(t => t.
