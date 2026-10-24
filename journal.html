@@ -21,7 +21,7 @@
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Nunito', sans-serif; transition: background 0.3s; }
-        body { background-color: var(--bg); color: var(--text); display: flex; min-height: 100vh; }
+        body { background-color: var(--bg); color: var(--text); display: flex; min-height: 100vh; overflow-x: hidden; }
 
         /* Меню */
         .sidebar { width: 260px; background: var(--card); box-shadow: var(--shadow); padding: 20px 0; display: flex; flex-direction: column; position: fixed; height: 100%; z-index: 100; }
@@ -95,9 +95,9 @@
         .day-content input { padding: 12px; border: 2px solid var(--border); border-radius: 10px; background: var(--bg); color: var(--text); font-size: 15px; outline: none; transition: 0.2s; }
         .day-content input:focus { border-color: var(--primary); }
 
-        /* РАССАДКА (3 ряда по 4 парты) */
-        .seating-rows { display: flex; flex-direction: column; gap: 30px; }
-        .seating-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+        /* РАССАДКА */
+        .seating-rows { display: flex; flex-direction: column; gap: 20px; }
+        .seating-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; }
         .desk { background: var(--card); padding: 15px; border-radius: 16px; box-shadow: var(--shadow); border: 2px dashed var(--border); }
         .desk-title { text-align: center; font-weight: 800; color: var(--text-muted); margin-bottom: 10px; text-transform: uppercase; font-size: 12px; }
         .desk-slot { background: var(--bg); padding: 8px; border-radius: 8px; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
@@ -107,9 +107,11 @@
         .toast { position: fixed; bottom: 30px; right: 30px; background: var(--primary); color: white; padding: 15px 25px; border-radius: 12px; font-weight: 700; box-shadow: var(--shadow); opacity: 0; transform: translateY(20px); transition: 0.3s; pointer-events: none; display: flex; align-items: center; gap: 10px; z-index: 1000; }
         .toast.show { opacity: 1; transform: translateY(0); }
 
+        /* АДАПТИВ */
         @media (max-width: 1024px) {
-            .seating-row { grid-template-columns: repeat(2, 1fr); }
+            .seating-row { grid-template-columns: repeat(3, 1fr); }
         }
+        
         @media (max-width: 768px) {
             .sidebar { width: 70px; }
             .sidebar .logo-area h2, .sidebar .nav-item span { display: none; }
@@ -118,12 +120,16 @@
             .top-bar { flex-direction: column; align-items: stretch; }
             .date-nav { justify-content: space-between; }
             select { width: 100%; }
+            
             th { display: none; }
             td { display: block; border: none; padding: 5px 15px; text-align: left; }
             tr { display: flex; flex-direction: column; border-bottom: 2px solid var(--border); padding: 15px 0; background: var(--card); margin-bottom: 10px; border-radius: 12px; position: relative; }
             .grade-wrapper { margin-top: 10px; justify-content: flex-start; }
             td:last-child { position: absolute; right: 10px; top: 10px; }
-            .seating-row { grid-template-columns: 1fr; }
+            
+            /* На телефоне по 2 парты в ряд */
+            .seating-row { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+            .desk { padding: 10px; }
         }
     </style>
 </head>
@@ -185,7 +191,7 @@
         <div class="schedule-grid" id="schedule-list"></div>
     </div>
 
-    <!-- РАССАДКА (3 ряда по 4 парты) -->
+    <!-- РАССАДКА -->
     <div id="view-seating" class="view-section">
         <div class="top-bar">
             <h2 style="color: var(--primary);"><i class="fa-solid fa-chair"></i> Рассадка (12 парт)</h2>
@@ -233,7 +239,6 @@
         'Суббота': ['Классный час'] 
     };
     
-    // ТЕПЕРЬ 12 ПАРТ
     let seating = Array(12).fill().map((_, i) => ({ desk: i + 1, seat1: "", seat2: "" }));
 
     window.toggleTheme = function() {
@@ -314,20 +319,17 @@
         saveToCloud();
     }
 
-    // РАССАДКА (3 ряда по 4 парты)
     window.renderSeating = function() {
         const container = document.getElementById('seating-list'); 
         container.innerHTML = '';
         
-        // Создаем 3 ряда
         for (let row = 0; row < 3; row++) {
             const rowDiv = document.createElement('div');
             rowDiv.className = 'seating-row';
             
-            // В каждом ряду по 4 парты
             for (let col = 0; col < 4; col++) {
-                const deskIndex = row * 4 + col; // Индекс парты от 0 до 11
-                const desk = seating[deskIndex];
+                const deskIndex = row * 4 + col;
+                const desk = seating[deskIndex] || { desk: deskIndex + 1, seat1: "", seat2: "" };
                 
                 const deskDiv = document.createElement('div');
                 deskDiv.className = 'desk';
