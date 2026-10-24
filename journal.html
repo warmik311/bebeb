@@ -342,4 +342,23 @@
                 const desk = seating[deskIndex] || { desk: deskIndex + 1, seat1: "", seat2: "" };
                 const deskDiv = document.createElement('div'); deskDiv.className = 'desk';
                 let html = `<div class="desk-title">Парта ${desk.desk}</div>`;
-                html += `<div class="desk-slot"><span>
+                html += `<div class="desk-slot"><span>1:</span><select id="desk_${deskIndex}_1"><option value="">-- Пусто --</option>`;
+                students.forEach(s => { html += `<option value="${s}" ${desk.seat1 === s ? 'selected' : ''}>${s}</option>`; });
+                html += `</select></div><div class="desk-slot"><span>2:</span><select id="desk_${deskIndex}_2"><option value="">-- Пусто --</option>`;
+                students.forEach(s => { html += `<option value="${s}" ${desk.seat2 === s ? 'selected' : ''}>${s}</option>`; });
+                html += `</select></div>`;
+                deskDiv.innerHTML = html; rowDiv.appendChild(deskDiv);
+            }
+            container.appendChild(rowDiv);
+        }
+    }
+
+    window.saveSeating = function() {
+        seating.forEach((desk, index) => { desk.seat1 = document.getElementById(`desk_${index}_1`).value; desk.seat2 = document.getElementById(`desk_${index}_2`).value; });
+        saveToCloud();
+    }
+
+    updateDateDisplay(); renderTable();
+</script>
+</body>
+</html>
