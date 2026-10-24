@@ -16,17 +16,34 @@
         .btn-link { background: none; color: #4c51bf; font-size: 14px; padding: 5px; margin: 0; text-decoration: underline; }
         .btn-link:hover { background: none; transform: none; }
         #error-msg { color: #e53e3e; margin-top: 10px; font-weight: 600; font-size: 14px; display: none; }
+        
+        /* Скрываем форму сброса по умолчанию */
+        #reset-section { display: none; }
+        #reset-msg { margin-top: 15px; font-weight: 600; font-size: 14px; display: none; }
     </style>
 </head>
 <body>
 
 <div class="login-box">
-    <h1>📖 Вход в 5 "А"</h1>
-    <input type="email" id="email" placeholder="Ваша почта">
-    <input type="password" id="password" placeholder="Пароль">
-    <button onclick="login()">Войти</button>
-    <button class="btn-link" onclick="resetPassword()">Забыли пароль?</button>
-    <div id="error-msg"></div>
+    <!-- БЛОК 1: ВХОД -->
+    <div id="login-section">
+        <h1>📖 Вход в 5 "А"</h1>
+        <input type="email" id="email" placeholder="Ваша почта">
+        <input type="password" id="password" placeholder="Пароль">
+        <button onclick="login()">Войти</button>
+        <button class="btn-link" onclick="showReset()">Забыли пароль?</button>
+        <div id="error-msg"></div>
+    </div>
+
+    <!-- БЛОК 2: СБРОС ПАРОЛЯ -->
+    <div id="reset-section">
+        <h1>🔑 Восстановление</h1>
+        <p style="font-size: 14px; color: #718096; margin-bottom: 20px;">Введите почту, и мы отправим ссылку для сброса.</p>
+        <input type="email" id="reset-email" placeholder="Ваша почта">
+        <button onclick="resetPassword()">Отправить ссылку</button>
+        <button class="btn-link" onclick="hideReset()">Назад ко входу</button>
+        <div id="reset-msg"></div>
+    </div>
 </div>
 
 <script type="module">
@@ -45,6 +62,7 @@
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
 
+    // ФУНКЦИЯ ВХОДА
     window.login = async function() {
         const email = document.getElementById('email').value;
         const password = document.getElementById('password').value;
@@ -52,6 +70,7 @@
 
         try {
             await signInWithEmailAndPassword(auth, email, password);
+            // Если пароль верный — перекидываем в журнал
             window.location.href = "journal.html"; 
         } catch (error) {
             errorDiv.style.display = 'block';
@@ -59,15 +78,34 @@
         }
     }
 
+    // ПОКАЗАТЬ ФОРМУ СБРОСА
+    window.showReset = function() {
+        document.getElementById('login-section').style.display = 'none';
+        document.getElementById('reset-section').style.display = 'block';
+        document.getElementById('error-msg').style.display = 'none';
+    }
+
+    // СКРЫТЬ ФОРМУ СБРОСА (вернуться)
+    window.hideReset = function() {
+        document.getElementById('login-section').style.display = 'block';
+        document.getElementById('reset-section').style.display = 'none';
+        document.getElementById('reset-msg').style.display = 'none';
+    }
+
+    // ОТПРАВИТЬ ПИСЬМО НА ПОЧТУ
     window.resetPassword = async function() {
-        const email = prompt("Введите вашу почту для сброса пароля:");
-        if (!email) return;
+        const email = document.getElementById('reset-email').value;
+        const msgDiv = document.getElementById('reset-msg');
         
         try {
             await sendPasswordResetEmail(auth, email);
-            alert("Письмо для сброса пароля отправлено на " + email + ". Проверьте почту!");
+            msgDiv.style.display = 'block';
+            msgDiv.style.color = '#38a169';
+            msgDiv.innerText = "Письмо отправлено! Проверьте почту.";
         } catch (error) {
-            alert("Ошибка: такой почты нет в системе.");
+            msgDiv.style.display = 'block';
+            msgDiv.style.color = '#e53e3e';
+            msgDiv.innerText = "Ошибка: проверьте правильность почты.";
         }
     }
 </script>
