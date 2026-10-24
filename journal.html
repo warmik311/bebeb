@@ -19,17 +19,21 @@
             --primary: #667eea; --primary-light: #2a4365; --border: #4a5568;
             --shadow: 0 4px 15px rgba(0,0,0,0.3);
         }
+
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Nunito', sans-serif; transition: background 0.3s; }
         body { background-color: var(--bg); color: var(--text); display: flex; min-height: 100vh; overflow-x: hidden; }
 
-        .sidebar { width: 260px; background: var(--card); box-shadow: var(--shadow); padding: 20px 0; display: flex; flex-direction: column; position: fixed; height: 100%; z-index: 100; }
+        /* Меню */
+        .sidebar { width: 260px; background: var(--card); box-shadow: var(--shadow); padding: 20px 0; display: flex; flex-direction: column; position: fixed; height: 100%; z-index: 100; overflow-y: auto; }
         .logo-area { padding: 0 25px 25px; border-bottom: 2px solid var(--border); margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }
         .logo-area h2 { color: var(--primary); font-size: 22px; font-weight: 800; }
         .theme-toggle { background: var(--bg); border: none; color: var(--text); font-size: 18px; cursor: pointer; padding: 10px; border-radius: 50%; }
         
-        .nav-item { padding: 16px 25px; display: flex; align-items: center; gap: 15px; color: var(--text-muted); font-weight: 700; cursor: pointer; border-left: 4px solid transparent; }
+        .nav-item { padding: 15px 25px; display: flex; align-items: center; gap: 15px; color: var(--text-muted); font-weight: 700; cursor: pointer; border-left: 4px solid transparent; transition: 0.2s; }
+        .nav-item:hover { background: var(--primary-light); color: var(--primary); }
         .nav-item.active { background: var(--primary-light); color: var(--primary); border-left-color: var(--primary); }
 
+        /* Контент */
         .main-content { margin-left: 260px; flex: 1; padding: 30px; width: calc(100% - 260px); }
         .view-section { display: none; animation: fadeIn 0.4s; }
         .view-section.active { display: block; }
@@ -47,11 +51,12 @@
         .stat-icon.blue { background: #ebf8ff; color: #3182ce; }
         .stat-icon.green { background: #f0fff4; color: #38a169; }
         .stat-icon.red { background: #fff5f5; color: #e53e3e; }
+        .stat-icon.purple { background: #faf5ff; color: #805ad5; }
         .stat-info h3 { font-size: 28px; font-weight: 800; }
         .stat-info p { font-size: 13px; color: var(--text-muted); font-weight: 700; text-transform: uppercase; }
 
         .table-card { background: var(--card); border-radius: 16px; overflow-x: auto; box-shadow: var(--shadow); margin-bottom: 25px; }
-        table { width: 100%; border-collapse: collapse; min-width: 1100px; }
+        table { width: 100%; border-collapse: collapse; min-width: 700px; }
         th { background: var(--bg); color: var(--text-muted); font-size: 12px; text-transform: uppercase; padding: 15px 10px; text-align: center; border-bottom: 2px solid var(--border); }
         td { padding: 12px 10px; border-bottom: 1px solid var(--border); text-align: center; vertical-align: middle; }
         
@@ -59,13 +64,14 @@
         .avatar { width: 35px; height: 35px; border-radius: 50%; background: var(--primary); color: white; display: flex; justify-content: center; align-items: center; font-weight: 800; font-size: 12px; }
         .student-name { font-weight: 700; font-size: 14px; }
 
-        .input-grade { width: 45px; height: 45px; text-align: center; font-size: 18px; font-weight: 800; border: 2px solid var(--border); border-radius: 10px; background: var(--card); color: var(--text); outline: none; }
+        .input-grade { width: 45px; height: 45px; text-align: center; font-size: 18px; font-weight: 800; border: 2px solid var(--border); border-radius: 10px; background: var(--card); color: var(--text); outline: none; transition: 0.2s; }
+        .input-grade:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(76, 81, 191, 0.15); }
         .input-grade[value="5"] { color: var(--grade-5); border-color: var(--grade-5); background: rgba(56, 161, 105, 0.1); }
         .input-grade[value="4"] { color: var(--grade-4); border-color: var(--grade-4); background: rgba(49, 130, 206, 0.1); }
         .input-grade[value="3"] { color: var(--grade-3); border-color: var(--grade-3); background: rgba(214, 158, 46, 0.1); }
         .input-grade[value="2"] { color: var(--grade-2); border-color: var(--grade-2); background: rgba(229, 62, 62, 0.1); }
-        
-        .input-note { width: 140px; padding: 10px; font-size: 14px; border: 2px solid var(--border); border-radius: 10px; background: var(--bg); color: var(--text); outline: none; }
+
+        .input-note { width: 100%; padding: 12px; font-size: 14px; border: 2px solid var(--border); border-radius: 10px; background: var(--bg); color: var(--text); outline: none; box-sizing: border-box; }
 
         .btn-n { width: 45px; height: 45px; border-radius: 10px; border: 2px solid var(--border); background: var(--bg); color: var(--text-muted); font-weight: 800; cursor: pointer; }
         .btn-n.active { background: var(--absent); color: white; border-color: var(--absent); }
@@ -97,7 +103,7 @@
         @media (max-width: 768px) {
             .sidebar { width: 70px; }
             .sidebar .logo-area h2, .sidebar .nav-item span { display: none; }
-            .nav-item { justify-content: center; padding: 20px 0; }
+            .nav-item { justify-content: center; padding: 15px 0; }
             .main-content { margin-left: 70px; width: calc(100% - 70px); padding: 15px; }
             .top-bar { flex-direction: column; align-items: stretch; }
             .date-nav { justify-content: space-between; }
@@ -114,12 +120,16 @@
         <button class="theme-toggle" onclick="toggleTheme()"><i class="fa-solid fa-moon" id="theme-icon"></i></button>
     </div>
     <div class="nav-item active" onclick="showTab('journal', this)"><i class="fa-solid fa-book"></i> <span>Журнал</span></div>
+    <div class="nav-item" onclick="showTab('quarters', this)"><i class="fa-solid fa-list-ol"></i> <span>Четверти</span></div>
+    <div class="nav-item" onclick="showTab('notes', this)"><i class="fa-solid fa-comment-dots"></i> <span>Замечания</span></div>
     <div class="nav-item" onclick="showTab('schedule', this)"><i class="fa-solid fa-calendar-days"></i> <span>Расписание</span></div>
     <div class="nav-item" onclick="showTab('seating', this)"><i class="fa-solid fa-chair"></i> <span>Рассадка</span></div>
     <div class="nav-item" style="margin-top: auto; color: var(--grade-2);" onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i> <span>Выйти</span></div>
 </div>
 
 <div class="main-content">
+    
+    <!-- ВКЛАДКА 1: ЖУРНАЛ (Только оценки за день) -->
     <div id="view-journal" class="view-section active">
         <div class="top-bar">
             <div class="date-nav">
@@ -150,13 +160,7 @@
                     <tr>
                         <th>№</th>
                         <th style="text-align:left; padding-left:10px;">Ученик</th>
-                        <th>День</th>
-                        <th>1 чет.</th>
-                        <th>2 чет.</th>
-                        <th>3 чет.</th>
-                        <th>4 чет.</th>
-                        <th>Год</th>
-                        <th style="min-width: 160px;">Замечания</th>
+                        <th>Оценка за день</th>
                         <th></th>
                     </tr>
                 </thead>
@@ -170,6 +174,67 @@
         </div>
     </div>
 
+    <!-- ВКЛАДКА 2: ЧЕТВЕРТИ -->
+    <div id="view-quarters" class="view-section">
+        <div class="top-bar">
+            <h2 style="color: var(--primary);"><i class="fa-solid fa-list-ol"></i> Итоговые оценки</h2>
+            <select id="subject-quarters" onchange="changeSubjectQuarters()">
+                <option value="Математика">Математика</option>
+                <option value="Русский язык">Русский язык</option>
+                <option value="Белорусский язык">Белорусский язык</option>
+                <option value="Физкультура">Физкультура</option>
+                <option value="Трудовое обучение">Трудовое обучение</option>
+                <option value="ОБЖ">ОБЖ</option>
+                <option value="Классный час">Классный час</option>
+            </select>
+        </div>
+        <div class="table-card">
+            <table>
+                <thead>
+                    <tr>
+                        <th>№</th>
+                        <th style="text-align:left; padding-left:10px;">Ученик</th>
+                        <th>1 чет.</th>
+                        <th>2 чет.</th>
+                        <th>3 чет.</th>
+                        <th>4 чет.</th>
+                        <th>Год</th>
+                    </tr>
+                </thead>
+                <tbody id="quarters-body"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- ВКЛАДКА 3: ЗАМЕЧАНИЯ -->
+    <div id="view-notes" class="view-section">
+        <div class="top-bar">
+            <h2 style="color: var(--primary);"><i class="fa-solid fa-comment-dots"></i> Замечания</h2>
+            <select id="subject-notes" onchange="changeSubjectNotes()">
+                <option value="Математика">Математика</option>
+                <option value="Русский язык">Русский язык</option>
+                <option value="Белорусский язык">Белорусский язык</option>
+                <option value="Физкультура">Физкультура</option>
+                <option value="Трудовое обучение">Трудовое обучение</option>
+                <option value="ОБЖ">ОБЖ</option>
+                <option value="Классный час">Классный час</option>
+            </select>
+        </div>
+        <div class="table-card">
+            <table>
+                <thead>
+                    <tr>
+                        <th>№</th>
+                        <th style="text-align:left; padding-left:10px;">Ученик</th>
+                        <th style="width: 80%;">Текст замечания</th>
+                    </tr>
+                </thead>
+                <tbody id="notes-body"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- ВКЛАДКА 4: РАСПИСАНИЕ -->
     <div id="view-schedule" class="view-section">
         <div class="top-bar">
             <h2 style="color: var(--primary);"><i class="fa-solid fa-calendar-days"></i> Расписание</h2>
@@ -178,6 +243,7 @@
         <div class="schedule-grid" id="schedule-list"></div>
     </div>
 
+    <!-- ВКЛАДКА 5: РАССАДКА -->
     <div id="view-seating" class="view-section">
         <div class="top-bar">
             <h2 style="color: var(--primary);"><i class="fa-solid fa-chair"></i> Рассадка (12 парт)</h2>
@@ -185,6 +251,7 @@
         </div>
         <div class="seating-rows" id="seating-list"></div>
     </div>
+
 </div>
 
 <div class="toast" id="toast"><i class="fa-solid fa-check-circle"></i> Сохранено</div>
@@ -215,7 +282,7 @@
     
     let grades = {}, absent = {}, notes = {}; 
     let currentSubject = "Математика", currentDate = new Date();
-    
+
     let schedule = {
         'Понедельник': ['Физкультура', 'Математика', 'Трудовое обучение', 'Белорусский язык', '', '', ''],
         'Вторник': ['Трудовое обучение', 'Русский язык', 'Математика', 'Белорусский язык', '', '', ''],
@@ -248,7 +315,7 @@
             if (data.notes) notes = data.notes;
             if (data.schedule) schedule = data.schedule;
             if (data.seating) seating = data.seating;
-            renderTable();
+            renderAll();
         } else { saveToCloud(); }
     });
 
@@ -256,6 +323,15 @@
         try { await setDoc(docRef, { students, grades, absent, notes, schedule, seating }); showToast(); } catch (e) { console.error(e); }
     }
 
+    // --- ФУНКЦИИ РЕНДЕРА ---
+    
+    function renderAll() {
+        renderTable();
+        renderQuarters();
+        renderNotes();
+    }
+
+    // 1. Журнал (только день)
     window.renderTable = function() {
         const tbody = document.getElementById('table-body'); if(!tbody) return; tbody.innerHTML = '';
         const dateStr = getDateString(currentDate); let presentCount = 0, absentCount = 0;
@@ -263,13 +339,6 @@
         students.forEach((name, index) => {
             const tr = document.createElement('tr'); 
             const dayKey = `${dateStr}_${currentSubject}_${name}`;
-            const noteKey = `${dateStr}_${currentSubject}_${name}`;
-            const q1Key = `Q1_${currentSubject}_${name}`;
-            const q2Key = `Q2_${currentSubject}_${name}`;
-            const q3Key = `Q3_${currentSubject}_${name}`;
-            const q4Key = `Q4_${currentSubject}_${name}`;
-            const yearKey = `YEAR_${currentSubject}_${name}`;
-
             const isAbsent = absent[dayKey];
             if (isAbsent) absentCount++; else presentCount++;
             const initials = name.split(' ').map(n => n[0]).join('').substring(0, 2);
@@ -288,12 +357,6 @@
                         <button class="btn-n ${isAbsent ? 'active' : ''}" onclick="toggleAbsent('${dayKey}')">Н</button>
                     </div>
                 </td>
-                <td>${makeInput(grades[q1Key], q1Key)}</td>
-                <td>${makeInput(grades[q2Key], q2Key)}</td>
-                <td>${makeInput(grades[q3Key], q3Key)}</td>
-                <td>${makeInput(grades[q4Key], q4Key)}</td>
-                <td>${makeInput(grades[yearKey], yearKey)}</td>
-                <td><input type="text" class="input-note" placeholder="..." value="${notes[noteKey] || ''}" oninput="updateNote('${noteKey}', this.value)"></td>
                 <td><button class="btn-del" onclick="deleteStudent(${index})"><i class="fa-solid fa-trash"></i></button></td>
             `;
             tbody.appendChild(tr);
@@ -304,20 +367,93 @@
         document.getElementById('stat-absent').innerText = absentCount;
     }
 
-    window.updateGrade = function(key, value) { grades[key] = value; saveToCloud(); renderTable(); }
+    // 2. Четверти
+    window.renderQuarters = function() {
+        const tbody = document.getElementById('quarters-body'); if(!tbody) return; tbody.innerHTML = '';
+        const subj = document.getElementById('subject-quarters').value;
+        
+        students.forEach((name, index) => {
+            const tr = document.createElement('tr'); 
+            const q1Key = `Q1_${subj}_${name}`;
+            const q2Key = `Q2_${subj}_${name}`;
+            const q3Key = `Q3_${subj}_${name}`;
+            const q4Key = `Q4_${subj}_${name}`;
+            const yearKey = `YEAR_${subj}_${name}`;
+            
+            const makeInput = (val, key) => {
+                const colorClass = val ? `style="color: var(--grade-${val}); border-color: var(--grade-${val});"` : '';
+                return `<input type="text" class="input-grade" maxlength="1" value="${val || ''}" ${colorClass} oninput="updateGrade('${key}', this.value)">`;
+            };
+
+            tr.innerHTML = `
+                <td>${index + 1}</td>
+                <td><div class="student-cell"><div class="avatar">${name[0]}</div><div class="student-name">${name}</div></div></td>
+                <td>${makeInput(grades[q1Key], q1Key)}</td>
+                <td>${makeInput(grades[q2Key], q2Key)}</td>
+                <td>${makeInput(grades[q3Key], q3Key)}</td>
+                <td>${makeInput(grades[q4Key], q4Key)}</td>
+                <td>${makeInput(grades[yearKey], yearKey)}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    // 3. Замечания
+    window.renderNotes = function() {
+        const tbody = document.getElementById('notes-body'); if(!tbody) return; tbody.innerHTML = '';
+        const subj = document.getElementById('subject-notes').value;
+        const dateStr = getDateString(currentDate);
+
+        students.forEach((name, index) => {
+            const tr = document.createElement('tr'); 
+            const noteKey = `${dateStr}_${subj}_${name}`;
+            
+            tr.innerHTML = `
+                <td>${index + 1}</td>
+                <td><div class="student-cell"><div class="avatar">${name[0]}</div><div class="student-name">${name}</div></div></td>
+                <td><input type="text" class="input-note" placeholder="Написать замечание..." value="${notes[noteKey] || ''}" oninput="updateNote('${noteKey}', this.value)"></td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    // --- ОБНОВЛЕНИЕ ДАННЫХ ---
+    window.updateGrade = function(key, value) { grades[key] = value; saveToCloud(); renderAll(); }
     window.updateNote = function(key, value) { notes[key] = value; saveToCloud(); }
-    window.toggleAbsent = function(key) { absent[key] = !absent[key]; if (absent[key]) grades[key] = ''; saveToCloud(); renderTable(); }
+    window.toggleAbsent = function(key) { absent[key] = !absent[key]; if (absent[key]) grades[key] = ''; saveToCloud(); renderAll(); }
+    
     window.changeSubject = function() { currentSubject = document.getElementById('subject').value; renderTable(); }
-    window.addStudent = function() { const input = document.getElementById('new-name'); if (input.value.trim() !== '') { students.push(input.value.trim()); input.value = ''; saveToCloud(); renderTable(); } }
-    window.deleteStudent = function(index) { if (confirm('Удалить ученика?')) { students.splice(index, 1); saveToCloud(); renderTable(); } }
+    window.changeSubjectQuarters = function() { renderQuarters(); }
+    window.changeSubjectNotes = function() { renderNotes(); }
+
+    window.addStudent = function() { 
+        const input = document.getElementById('new-name'); 
+        if (input.value.trim() !== '') { 
+            students.push(input.value.trim()); 
+            input.value = ''; 
+            saveToCloud(); 
+            renderAll(); 
+        } 
+    }
+    
+    window.deleteStudent = function(index) { 
+        if (confirm('Удалить ученика?')) { 
+            students.splice(index, 1); 
+            saveToCloud(); 
+            renderAll(); 
+        } 
+    }
 
     window.showTab = function(tabName, element) {
         document.querySelectorAll('.nav-item').forEach(t => t.classList.remove('active')); element.classList.add('active');
         document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active')); document.getElementById(`view-${tabName}`).classList.add('active');
         if (tabName === 'schedule') renderSchedule();
         if (tabName === 'seating') renderSeating();
+        if (tabName === 'quarters') renderQuarters();
+        if (tabName === 'notes') renderNotes();
     }
 
+    // --- РАСПИСАНИЕ И РАССАДКА ---
     window.renderSchedule = function() {
         const container = document.getElementById('schedule-list'); container.innerHTML = '';
         for (let day in schedule) {
@@ -358,7 +494,7 @@
         saveToCloud();
     }
 
-    updateDateDisplay(); renderTable();
+    updateDateDisplay(); renderAll();
 </script>
 </body>
 </html>
