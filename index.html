@@ -25,7 +25,7 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Nunito', sans-serif; transition: background-color 0.3s, color 0.3s; }
         body { background-color: var(--bg); color: var(--text); display: flex; min-height: 100vh; overflow-x: hidden; }
 
-        /* --- БОКОВОЕ МЕНЮ --- */
+        /* БОКОВОЕ МЕНЮ */
         .sidebar { width: 260px; background: var(--card); box-shadow: var(--shadow); padding: 20px 0; display: flex; flex-direction: column; position: fixed; height: 100%; z-index: 100; overflow-y: auto; }
         .logo-area { padding: 0 25px 25px; border-bottom: 2px solid var(--border); margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }
         .logo-area h2 { color: var(--primary); font-size: 22px; font-weight: 800; white-space: nowrap; }
@@ -37,7 +37,7 @@
         .nav-item.active { background: var(--primary-light); color: var(--primary); border-left-color: var(--primary); }
         .nav-item i { font-size: 20px; width: 25px; text-align: center; }
 
-        /* --- ОСНОВНОЙ КОНТЕНТ --- */
+        /* ОСНОВНОЙ КОНТЕНТ */
         .main-content { margin-left: 260px; flex: 1; padding: 30px; width: calc(100% - 260px); }
         .view-section { display: none; animation: fadeIn 0.3s ease-in-out; }
         .view-section.active { display: block; }
@@ -53,7 +53,7 @@
         select { padding: 12px 20px; border-radius: 12px; border: 2px solid var(--border); background: var(--card); color: var(--primary); font-weight: 700; font-size: 16px; outline: none; cursor: pointer; transition: 0.2s; }
         select:focus { border-color: var(--primary); }
 
-        /* --- СТАТИСТИКА --- */
+        /* СТАТИСТИКА */
         .stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 25px; }
         .stat-box { background: var(--card); padding: 20px; border-radius: 16px; box-shadow: var(--shadow); display: flex; align-items: center; gap: 20px; }
         .stat-icon { width: 60px; height: 60px; border-radius: 16px; display: flex; justify-content: center; align-items: center; font-size: 28px; }
@@ -64,7 +64,7 @@
         .stat-info h3 { font-size: 28px; font-weight: 800; }
         .stat-info p { font-size: 13px; color: var(--text-muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
 
-        /* --- ТАБЛИЦА --- */
+        /* ТАБЛИЦА */
         .table-card { background: var(--card); border-radius: 16px; overflow: hidden; box-shadow: var(--shadow); margin-bottom: 25px; }
         table { width: 100%; border-collapse: collapse; }
         th { background: var(--bg); color: var(--text-muted); font-size: 13px; text-transform: uppercase; padding: 18px 15px; text-align: center; border-bottom: 2px solid var(--border); }
@@ -74,7 +74,7 @@
         .avatar { width: 40px; height: 40px; border-radius: 50%; background: var(--primary); color: white; display: flex; justify-content: center; align-items: center; font-weight: 800; font-size: 14px; }
         .student-name { font-weight: 700; font-size: 16px; }
 
-        /* --- ОЦЕНКИ --- */
+        /* ОЦЕНКИ */
         .grade-wrapper { display: flex; justify-content: center; gap: 10px; }
         .input-grade { width: 50px; height: 50px; text-align: center; font-size: 22px; font-weight: 800; border: 2px solid var(--border); border-radius: 12px; background: var(--card); color: var(--text); outline: none; transition: 0.2s; }
         .input-grade:focus { border-color: var(--primary); box-shadow: 0 0 0 4px rgba(76, 81, 191, 0.15); }
@@ -91,14 +91,14 @@
         .btn-del { width: 40px; height: 40px; border-radius: 10px; border: none; background: transparent; color: var(--text-muted); cursor: pointer; transition: 0.2s; font-size: 16px; }
         .btn-del:hover { color: var(--grade-2); background: rgba(229, 62, 62, 0.1); }
 
-        /* --- ФОРМА ДОБАВЛЕНИЯ --- */
+        /* ФОРМА ДОБАВЛЕНИЯ */
         .add-bar { background: var(--card); padding: 20px; border-radius: 16px; box-shadow: var(--shadow); display: flex; gap: 15px; }
         .input-new { flex: 1; padding: 15px 20px; border: 2px solid var(--border); border-radius: 12px; font-size: 16px; background: var(--bg); color: var(--text); outline: none; transition: 0.2s; }
         .input-new:focus { border-color: var(--primary); }
         .btn-add { padding: 0 30px; border: none; border-radius: 12px; background: var(--primary); color: white; font-weight: 700; font-size: 16px; cursor: pointer; transition: 0.2s; white-space: nowrap; }
         .btn-add:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(76, 81, 191, 0.3); }
 
-        /* --- РАСПИСАНИЕ --- */
+        /* РАСПИСАНИЕ */
         .schedule-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
         .day-card { background: var(--card); border-radius: 16px; overflow: hidden; box-shadow: var(--shadow); }
         .day-title { background: var(--primary); color: white; padding: 15px 20px; font-weight: 800; font-size: 16px; }
@@ -106,7 +106,7 @@
         .day-content input { padding: 12px; border: 2px solid var(--border); border-radius: 10px; background: var(--bg); color: var(--text); font-size: 15px; font-weight: 600; outline: none; }
         .day-content input:focus { border-color: var(--primary); }
 
-        /* --- РАССАДКА --- */
+        /* РАССАДКА */
         .seating-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
         .desk { background: var(--card); padding: 20px; border-radius: 16px; box-shadow: var(--shadow); border: 2px dashed var(--border); }
         .desk-title { text-align: center; font-weight: 800; color: var(--text-muted); margin-bottom: 15px; text-transform: uppercase; font-size: 13px; letter-spacing: 1px; }
@@ -114,18 +114,36 @@
         .desk-slot span { font-weight: 800; color: var(--primary); font-size: 14px; }
         .desk-slot select { width: 100%; padding: 8px; font-size: 14px; border-radius: 8px; border: 1px solid var(--border); }
 
-        /* --- ТОСТ --- */
+        /* ТОСТ */
         .toast { position: fixed; bottom: 30px; right: 30px; background: var(--primary); color: white; padding: 15px 25px; border-radius: 12px; font-weight: 700; box-shadow: var(--shadow); opacity: 0; transform: translateY(20px); transition: 0.3s; pointer-events: none; display: flex; align-items: center; gap: 10px; z-index: 1000; }
         .toast.show { opacity: 1; transform: translateY(0); }
 
-        /* --- АДАПТИВ --- */
+        /* АДАПТИВ ДЛЯ ТЕЛЕФОНОВ */
         @media (max-width: 768px) {
+            /* Меню превращается в узкую панель */
             .sidebar { width: 70px; }
             .sidebar .logo-area h2, .sidebar .nav-item span { display: none; }
             .nav-item { justify-content: center; padding: 20px 0; }
             .main-content { margin-left: 70px; width: calc(100% - 70px); padding: 15px; }
-            .top-bar { flex-direction: column; align-items: stretch; }
-            .date-nav { justify-content: space-between; }
+            
+            /* Верхняя панель встает в колонку */
+            .top-bar { flex-direction: column; align-items: stretch; padding: 15px; gap: 15px; }
+            .date-nav { justify-content: space-between; width: 100%; }
+            .date-text { font-size: 16px; min-width: auto; }
+            select { width: 100%; }
+            
+            /* Таблица превращается в карточки */
+            th { display: none; }
+            td { display: block; border: none; padding: 5px 15px; text-align: left; }
+            tr { display: flex; flex-direction: column; border-bottom: 2px solid var(--border); padding: 15px 0; background: var(--card); margin-bottom: 10px; border-radius: 12px; }
+            
+            .student-cell { gap: 10px; }
+            .grade-wrapper { margin-top: 10px; justify-content: flex-start; }
+            .input-grade, .btn-n { width: 45px; height: 45px; }
+            
+            /* Кнопка удаления уезжает вправо */
+            td:last-child { position: absolute; right: 10px; top: 10px; }
+            tr { position: relative; }
         }
     </style>
 </head>
@@ -327,141 +345,4 @@
             const key = `${dateStr}_${currentSubject}_${name}`;
             const isAbsent = absent[key];
             if (isAbsent) absentCount++; else presentCount++;
-            const initials = name.split(' ').map(n => n[0]).join('').substring(0, 2);
-
-            tr.innerHTML = `
-                <td>${index + 1}</td>
-                <td><div class="student-cell"><div class="avatar">${initials}</div><div class="student-name">${name}</div></div></td>
-            `;
-            const tdGrade = document.createElement('td');
-            const gradeValue = grades[key] || '';
-            tdGrade.innerHTML = `
-                <div class="grade-wrapper">
-                    <input type="text" class="input-grade" maxlength="1" value="${gradeValue}" oninput="updateGrade('${name}', this.value)">
-                    <button class="btn-n ${isAbsent ? 'active' : ''}" onclick="toggleAbsent('${name}')">Н</button>
-                </div>
-            `;
-            tr.appendChild(tdGrade);
-            const tdDel = document.createElement('td');
-            tdDel.innerHTML = `<button class="btn-del" onclick="deleteStudent(${index})"><i class="fa-solid fa-trash"></i></button>`;
-            tr.appendChild(tdDel);
-            tbody.appendChild(tr);
-        });
-
-        document.getElementById('stat-total').innerText = students.length;
-        document.getElementById('stat-present').innerText = presentCount;
-        document.getElementById('stat-absent').innerText = absentCount;
-    }
-
-    window.updateGrade = function(name, value) {
-        const key = `${getDateString(currentDate)}_${currentSubject}_${name}`;
-        grades[key] = value;
-        if (value) absent[key] = false; 
-        saveToCloud(); renderTable();
-    }
-
-    window.toggleAbsent = function(name) {
-        const key = `${getDateString(currentDate)}_${currentSubject}_${name}`;
-        absent[key] = !absent[key];
-        if (absent[key]) grades[key] = ''; 
-        saveToCloud(); renderTable();
-    }
-
-    window.changeSubject = function() {
-        currentSubject = document.getElementById('subject').value;
-        renderTable();
-    }
-
-    window.addStudent = function() {
-        const input = document.getElementById('new-name');
-        if (input.value.trim() !== '') {
-            students.push(input.value.trim());
-            input.value = '';
-            saveToCloud(); renderTable();
-        }
-    }
-
-    window.deleteStudent = function(index) {
-        if (confirm('Удалить ученика?')) {
-            students.splice(index, 1);
-            saveToCloud(); renderTable();
-        }
-    }
-
-    // --- ВКЛАДКИ ---
-    window.showTab = function(tabName, element) {
-        document.querySelectorAll('.nav-item').forEach(t => t.classList.remove('active'));
-        element.classList.add('active');
-        
-        document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active'));
-        document.getElementById(`view-${tabName}`).classList.add('active');
-
-        if (tabName === 'schedule') renderSchedule();
-        if (tabName === 'seating') renderSeating();
-    }
-
-    // --- РАСПИСАНИЕ ---
-    window.renderSchedule = function() {
-        const container = document.getElementById('schedule-list');
-        container.innerHTML = '';
-        for (let day in schedule) {
-            const div = document.createElement('div');
-            div.className = 'day-card';
-            let html = `<div class="day-title">${day}</div><div class="day-content">`;
-            schedule[day].forEach((subj, i) => {
-                html += `<input type="text" id="s_${day}_${i}" value="${subj}" placeholder="Урок ${i+1}">`;
-            });
-            html += `</div>`;
-            div.innerHTML = html;
-            container.appendChild(div);
-        }
-    }
-
-    window.saveSchedule = function() {
-        for (let day in schedule) {
-            schedule[day].forEach((_, i) => {
-                schedule[day][i] = document.getElementById(`s_${day}_${i}`).value;
-            });
-        }
-        saveToCloud();
-    }
-
-    // --- РАССАДКА ---
-    window.renderSeating = function() {
-        const container = document.getElementById('seating-list');
-        container.innerHTML = '';
-        seating.forEach((desk, index) => {
-            const div = document.createElement('div');
-            div.className = 'desk';
-            let html = `<div class="desk-title">Парта ${desk.desk}</div>`;
-            
-            html += `<div class="desk-slot"><span>1:</span><select id="desk_${index}_1">`;
-            html += `<option value="">-- Пусто --</option>`;
-            students.forEach(s => { html += `<option value="${s}" ${desk.seat1 === s ? 'selected' : ''}>${s}</option>`; });
-            html += `</select></div>`;
-
-            html += `<div class="desk-slot"><span>2:</span><select id="desk_${index}_2">`;
-            html += `<option value="">-- Пусто --</option>`;
-            students.forEach(s => { html += `<option value="${s}" ${desk.seat2 === s ? 'selected' : ''}>${s}</option>`; });
-            html += `</select></div>`;
-            
-            div.innerHTML = html;
-            container.appendChild(div);
-        });
-    }
-
-    window.saveSeating = function() {
-        seating.forEach((desk, index) => {
-            desk.seat1 = document.getElementById(`desk_${index}_1`).value;
-            desk.seat2 = document.getElementById(`desk_${index}_2`).value;
-        });
-        localStorage.setItem('seating', JSON.stringify(seating));
-        showToast();
-    }
-
-    // --- СТАРТ ---
-    updateDateDisplay();
-    renderTable();
-</script>
-</body>
-</html>
+            const initials = name.split(' ').map(n => n[0]).join('
