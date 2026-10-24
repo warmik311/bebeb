@@ -23,7 +23,6 @@
 <body>
 
 <div class="login-box">
-    <!-- Форма входа -->
     <div id="login-section">
         <h1>📖 Вход в 5 "А"</h1>
         <input type="email" id="email" placeholder="Ваша почта">
@@ -33,10 +32,9 @@
         <div id="error-msg"></div>
     </div>
 
-    <!-- Форма сброса пароля -->
     <div id="reset-section">
         <h1>🔑 Восстановление</h1>
-        <p style="font-size: 14px; color: #718096; margin-bottom: 20px;">Введите почту, на которую зарегистрирован аккаунт, и мы отправим ссылку для сброса.</p>
+        <p style="font-size: 14px; color: #718096; margin-bottom: 20px;">Введите почту, и мы отправим ссылку для сброса.</p>
         <input type="email" id="reset-email" placeholder="Ваша почта">
         <button onclick="resetPassword()">Отправить ссылку</button>
         <button class="btn-link" onclick="hideReset()">Назад ко входу</button>
@@ -60,9 +58,7 @@
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
 
-    onAuthStateChanged(auth, (user) => {
-        if (user) { window.location.href = "journal.html"; }
-    });
+    // Убрали автоматический перекидыш, чтобы не мигало
 
     window.login = async function() {
         const email = document.getElementById('email').value;
@@ -81,6 +77,7 @@
     window.showReset = function() {
         document.getElementById('login-section').style.display = 'none';
         document.getElementById('reset-section').style.display = 'block';
+        document.getElementById('error-msg').style.display = 'none';
     }
 
     window.hideReset = function() {
@@ -97,11 +94,11 @@
             await sendPasswordResetEmail(auth, email);
             msgDiv.style.display = 'block';
             msgDiv.style.color = '#38a169';
-            msgDiv.innerText = "Письмо отправлено! Проверьте вашу почту (включая папку Спам).";
+            msgDiv.innerText = "Письмо отправлено! Проверьте почту.";
         } catch (error) {
             msgDiv.style.display = 'block';
             msgDiv.style.color = '#e53e3e';
-            msgDiv.innerText = "Ошибка: проверьте правильность почты.";
+            msgDiv.innerText = "Ошибка: проверьте почту.";
         }
     }
 </script>
