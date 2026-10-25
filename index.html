@@ -7,51 +7,57 @@
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
         body { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); height: 100vh; display: flex; justify-content: center; align-items: center; margin: 0; font-family: 'Nunito', sans-serif; }
-        .login-box { background: white; padding: 40px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); width: 100%; max-width: 400px; text-align: center; box-sizing: border-box; margin: 15px; }
-        h1 { color: #4c51bf; margin-bottom: 30px; font-weight: 800; }
+        .login-box { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); width: 100%; max-width: 400px; text-align: center; }
+        h1 { color: #4c51bf; margin-bottom: 20px; font-weight: 800; }
+        
+        /* Вкладки */
+        .tabs { display: flex; margin-bottom: 20px; background: #e2e8f0; border-radius: 10px; overflow: hidden; }
+        .tab { flex: 1; padding: 12px; cursor: pointer; font-weight: 700; color: #718096; transition: 0.3s; }
+        .tab.active { background: #4c51bf; color: white; }
+
         input { width: 100%; padding: 15px; margin-bottom: 15px; border: 2px solid #e2e8f0; border-radius: 12px; font-size: 16px; box-sizing: border-box; outline: none; transition: 0.2s; }
         input:focus { border-color: #4c51bf; }
         button { width: 100%; padding: 15px; background: #4c51bf; color: white; border: none; border-radius: 12px; font-size: 18px; font-weight: 700; cursor: pointer; transition: 0.2s; margin-bottom: 10px; }
         button:hover { background: #434190; transform: translateY(-2px); }
-        .btn-link { background: none; color: #4c51bf; font-size: 14px; padding: 5px; margin: 0; text-decoration: underline; border: none; cursor: pointer; font-weight: 600; }
-        .btn-link:hover { background: none; transform: none; color: #434190; }
-        
+        .btn-link { background: none; color: #4c51bf; font-size: 14px; padding: 5px; margin: 0; text-decoration: underline; }
+        .btn-link:hover { background: none; transform: none; }
         #error-msg { color: #e53e3e; margin-top: 10px; font-weight: 600; font-size: 14px; display: none; }
-        #reset-msg { margin-top: 15px; font-weight: 600; font-size: 14px; display: none; padding: 10px; border-radius: 8px; }
         
-        /* Скрываем форму сброса по умолчанию */
-        #reset-section { display: none; }
-        .reset-title { font-size: 20px; color: #4c51bf; margin-bottom: 15px; font-weight: 800; }
-        .reset-text { font-size: 14px; color: #718096; margin-bottom: 20px; }
+        .form-section { display: none; }
+        .form-section.active { display: block; }
     </style>
 </head>
 <body>
 
 <div class="login-box">
-    <!-- БЛОК 1: ВХОД -->
-    <div id="login-section">
-        <h1>📖 Вход в 5 "А"</h1>
-        <input type="email" id="email" placeholder="Ваша почта">
-        <input type="password" id="password" placeholder="Пароль">
-        <button onclick="login()">Войти</button>
-        <button class="btn-link" onclick="showReset()">Забыли пароль?</button>
-        <div id="error-msg"></div>
+    <h1>📖 Вход в 5 "А"</h1>
+    
+    <div class="tabs">
+        <div class="tab active" onclick="switchLoginTab('teacher')">Учитель</div>
+        <div class="tab" onclick="switchLoginTab('parent')">Родитель</div>
     </div>
 
-    <!-- БЛОК 2: СБРОС ПАРОЛЯ (Красивый) -->
-    <div id="reset-section">
-        <div class="reset-title">🔑 Восстановление</div>
-        <div class="reset-text">Введите почту, на которую зарегистрирован аккаунт, и мы отправим ссылку для сброса.</div>
-        <input type="email" id="reset-email" placeholder="Ваша почта">
-        <button onclick="resetPassword()">Отправить ссылку</button>
-        <button class="btn-link" onclick="hideReset()">← Назад ко входу</button>
-        <div id="reset-msg"></div>
+    <!-- Форма для Учителя -->
+    <div id="form-teacher" class="form-section active">
+        <input type="email" id="email-teacher" placeholder="Ваша почта">
+        <input type="password" id="password-teacher" placeholder="Пароль">
+        <button onclick="loginTeacher()">Войти как учитель</button>
+        <button class="btn-link" onclick="resetPassword()">Забыли пароль?</button>
     </div>
+
+    <!-- Форма для Родителя -->
+    <div id="form-parent" class="form-section">
+        <input type="text" id="login-parent" placeholder="Логин (например, mama)">
+        <input type="password" id="password-parent" placeholder="Пароль">
+        <button onclick="loginParent()">Войти как родитель</button>
+    </div>
+
+    <div id="error-msg"></div>
 </div>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getAuth, signInWithEmailAndPassword, sendPasswordResetEmail, setPersistence, browserLocalPersistence, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { getAuth, signInWithEmailAndPassword, sendPasswordResetEmail, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyC1v7Ao25hITuwonTkD9e2CgQiu8BxrepI",
@@ -65,23 +71,24 @@
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
 
-    // АВТОЛОГИН: Если уже вошел, сразу кидаем в журнал
-    onAuthStateChanged(auth, (user) => {
-        if (user) {
-            window.location.href = "journal.html"; 
+    window.switchLoginTab = function(type) {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.form-section').forEach(f => f.classList.remove('active'));
+        document.getElementById('error-msg').style.display = 'none';
+        
+        if (type === 'teacher') {
+            document.querySelectorAll('.tab')[0].classList.add('active');
+            document.getElementById('form-teacher').classList.add('active');
+        } else {
+            document.querySelectorAll('.tab')[1].classList.add('active');
+            document.getElementById('form-parent').classList.add('active');
         }
-    });
+    }
 
-    window.login = async function() {
-        const email = document.getElementById('email').value;
-        const password = document.getElementById('password').value;
+    window.loginTeacher = async function() {
+        const email = document.getElementById('email-teacher').value;
+        const password = document.getElementById('password-teacher').value;
         const errorDiv = document.getElementById('error-msg');
-
-        if (!email || !password) {
-            errorDiv.style.display = 'block';
-            errorDiv.innerText = "Заполните все поля!";
-            return;
-        }
 
         try {
             await setPersistence(auth, browserLocalPersistence);
@@ -93,42 +100,38 @@
         }
     }
 
-    // ПЕРЕКЛЮЧЕНИЕ ЭКРАНОВ
-    window.showReset = function() {
-        document.getElementById('login-section').style.display = 'none';
-        document.getElementById('reset-section').style.display = 'block';
-    }
+    window.loginParent = async function() {
+        const login = document.getElementById('login-parent').value.trim();
+        const password = document.getElementById('password-parent').value;
+        const errorDiv = document.getElementById('error-msg');
 
-    window.hideReset = function() {
-        document.getElementById('login-section').style.display = 'block';
-        document.getElementById('reset-section').style.display = 'none';
-        document.getElementById('reset-msg').style.display = 'none';
-    }
-
-    // ОТПРАВКА ПИСЬМА (Без уродливого окна)
-    window.resetPassword = async function() {
-        const email = document.getElementById('reset-email').value;
-        const msgDiv = document.getElementById('reset-msg');
-        
-        if (!email) {
-            msgDiv.style.display = 'block';
-            msgDiv.style.color = '#e53e3e';
-            msgDiv.style.background = '#ffebee';
-            msgDiv.innerText = "Введите почту!";
+        if (!login || !password) {
+            errorDiv.style.display = 'block';
+            errorDiv.innerText = "Заполните все поля!";
             return;
         }
 
+        // ХИТРОСТЬ: Добавляем к логину скрытую почту, чтобы Firebase пустил
+        const fakeEmail = login + "@parent.local";
+
+        try {
+            await setPersistence(auth, browserLocalPersistence);
+            await signInWithEmailAndPassword(auth, fakeEmail, password);
+            window.location.href = "journal.html"; 
+        } catch (error) {
+            errorDiv.style.display = 'block';
+            errorDiv.innerText = "Ошибка: неверный логин или пароль!";
+        }
+    }
+
+    window.resetPassword = async function() {
+        const email = prompt("Введите вашу почту (учителя) для сброса пароля:");
+        if (!email) return;
         try {
             await sendPasswordResetEmail(auth, email);
-            msgDiv.style.display = 'block';
-            msgDiv.style.color = '#38a169';
-            msgDiv.style.background = '#e8f5e9';
-            msgDiv.innerText = "Письмо отправлено! Проверьте вашу почту.";
+            alert("Письмо отправлено на " + email);
         } catch (error) {
-            msgDiv.style.display = 'block';
-            msgDiv.style.color = '#e53e3e';
-            msgDiv.style.background = '#ffebee';
-            msgDiv.innerText = "Ошибка: проверьте правильность почты.";
+            alert("Ошибка: проверьте почту.");
         }
     }
 </script>
