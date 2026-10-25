@@ -7,7 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
         body { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); height: 100vh; display: flex; justify-content: center; align-items: center; margin: 0; font-family: 'Nunito', sans-serif; }
-        .login-box { background: white; padding: 40px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); width: 100%; max-width: 400px; text-align: center; }
+        .login-box { background: white; padding: 40px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); width: 100%; max-width: 400px; text-align: center; box-sizing: border-box; margin: 15px; }
         h1 { color: #4c51bf; margin-bottom: 30px; font-weight: 800; }
         input { width: 100%; padding: 15px; margin-bottom: 15px; border: 2px solid #e2e8f0; border-radius: 12px; font-size: 16px; box-sizing: border-box; outline: none; transition: 0.2s; }
         input:focus { border-color: #4c51bf; }
@@ -31,8 +31,7 @@
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    // ДОБАВЛЕНЫ setPersistence И browserLocalPersistence
-    import { getAuth, signInWithEmailAndPassword, sendPasswordResetEmail, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { getAuth, signInWithEmailAndPassword, sendPasswordResetEmail, setPersistence, browserLocalPersistence, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyC1v7Ao25hITuwonTkD9e2CgQiu8BxrepI",
@@ -46,9 +45,11 @@
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
 
-    // ВКЛЮЧАЕМ ЗАПОМИНАНИЕ СЕССИИ
-    setPersistence(auth, browserLocalPersistence).catch((error) => {
-        console.error("Ошибка сохранения сессии:", error);
+    // АВТОМАТИЧЕСКИЙ ВХОД, ЕСЛИ ПАРОЛЬ УЖЕ СОХРАНЕН
+    onAuthStateChanged(auth, (user) => {
+        if (user) {
+            window.location.href = "journal.html"; 
+        }
     });
 
     window.login = async function() {
@@ -63,6 +64,7 @@
         }
 
         try {
+            await setPersistence(auth, browserLocalPersistence); // Запоминаем вход
             await signInWithEmailAndPassword(auth, email, password);
             window.location.href = "journal.html"; 
         } catch (error) {
@@ -74,12 +76,11 @@
     window.resetPassword = async function() {
         const email = prompt("Введите вашу почту для сброса пароля:");
         if (!email) return;
-        
         try {
             await sendPasswordResetEmail(auth, email);
-            alert("Отлично! Письмо для сброса пароля отправлено на " + email + ". Проверьте почту.");
+            alert("Письмо отправлено на " + email);
         } catch (error) {
-            alert("Ошибка! Проверьте, правильно ли вы ввели почту.");
+            alert("Ошибка: проверьте почту.");
         }
     }
 </script>
