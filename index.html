@@ -10,7 +10,6 @@
         .login-box { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); width: 100%; max-width: 400px; text-align: center; }
         h1 { color: #4c51bf; margin-bottom: 20px; font-weight: 800; }
         
-        /* Вкладки */
         .tabs { display: flex; margin-bottom: 20px; background: #e2e8f0; border-radius: 10px; overflow: hidden; }
         .tab { flex: 1; padding: 12px; cursor: pointer; font-weight: 700; color: #718096; transition: 0.3s; }
         .tab.active { background: #4c51bf; color: white; }
@@ -83,7 +82,7 @@
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getAuth, signInWithEmailAndPassword, sendPasswordResetEmail, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { getAuth, signInWithEmailAndPassword, sendPasswordResetEmail, setPersistence, browserLocalPersistence, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyC1v7Ao25hITuwonTkD9e2CgQiu8BxrepI",
@@ -96,6 +95,11 @@
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
+
+    // ВОТ ОН, АВТОЛОГИН (Проверяет, вошел ли ты, и кидает в журнал)
+    onAuthStateChanged(auth, (user) => {
+        if (user) { window.location.href = "journal.html"; }
+    });
 
     window.switchLoginTab = function(type) {
         document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
@@ -149,7 +153,6 @@
         }
     }
 
-    // Модальное окно
     window.openResetModal = function() {
         document.getElementById('reset-modal').style.display = 'flex';
         document.getElementById('reset-status').style.display = 'none';
