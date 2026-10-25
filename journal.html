@@ -49,7 +49,6 @@
         .stat-icon.blue { background: #ebf8ff; color: #3182ce; }
         .stat-icon.green { background: #f0fff4; color: #38a169; }
         .stat-icon.red { background: #fff5f5; color: #e53e3e; }
-        .stat-icon.purple { background: #faf5ff; color: #805ad5; }
         .stat-info h3 { font-size: 28px; font-weight: 800; }
         .stat-info p { font-size: 13px; color: var(--text-muted); font-weight: 700; text-transform: uppercase; }
 
@@ -97,7 +96,6 @@
         .toast { position: fixed; bottom: 30px; right: 30px; background: var(--primary); color: white; padding: 15px 25px; border-radius: 12px; font-weight: 700; box-shadow: var(--shadow); opacity: 0; transform: translateY(20px); transition: 0.3s; pointer-events: none; z-index: 1000; }
         .toast.show { opacity: 1; transform: translateY(0); }
 
-        /* АДАПТИВ ДЛЯ ТЕЛЕФОНОВ */
         @media (max-width: 1024px) { .seating-row { grid-template-columns: repeat(2, 1fr); } }
         @media (max-width: 768px) {
             .sidebar { width: 70px; }
@@ -108,8 +106,6 @@
             .date-nav { justify-content: space-between; }
             select { width: 100%; }
             .seating-row { grid-template-columns: 1fr; }
-            
-            /* Таблица превращается в карточки на телефоне */
             th { display: none; }
             td { display: block; border: none; padding: 5px 15px; text-align: left; }
             tr { display: flex; flex-direction: column; border-bottom: 2px solid var(--border); padding: 15px 0; background: var(--card); margin-bottom: 10px; border-radius: 12px; position: relative; }
@@ -274,7 +270,6 @@
     const auth = getAuth(app);
     const docRef = doc(db, "journal", "class5a");
 
-    // Убрали проверку onAuthStateChanged, чтобы тебя не выкидывало!
     window.logout = function() { signOut(auth).then(() => { window.location.href = "index.html"; }); }
 
     let students = ["Борисов Андрей", "Виноградов Артём", "Гуков Димитрий", "Григорьев Александр", "Гроховский Давид", "Прокофьев Денис", "Смороеский Евгений", "Макачёва Ульяна", "Кожеметёнов Ина", "Рахматулин Дамиил", "Остапук Маргарита", "Радьева Эмма"];
