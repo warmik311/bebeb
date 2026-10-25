@@ -13,20 +13,40 @@
         input:focus { border-color: #4c51bf; }
         button { width: 100%; padding: 15px; background: #4c51bf; color: white; border: none; border-radius: 12px; font-size: 18px; font-weight: 700; cursor: pointer; transition: 0.2s; margin-bottom: 10px; }
         button:hover { background: #434190; transform: translateY(-2px); }
-        .btn-link { background: none; color: #4c51bf; font-size: 14px; padding: 5px; margin: 0; text-decoration: underline; }
-        .btn-link:hover { background: none; transform: none; }
+        .btn-link { background: none; color: #4c51bf; font-size: 14px; padding: 5px; margin: 0; text-decoration: underline; border: none; cursor: pointer; font-weight: 600; }
+        .btn-link:hover { background: none; transform: none; color: #434190; }
+        
         #error-msg { color: #e53e3e; margin-top: 10px; font-weight: 600; font-size: 14px; display: none; }
+        #reset-msg { margin-top: 15px; font-weight: 600; font-size: 14px; display: none; padding: 10px; border-radius: 8px; }
+        
+        /* Скрываем форму сброса по умолчанию */
+        #reset-section { display: none; }
+        .reset-title { font-size: 20px; color: #4c51bf; margin-bottom: 15px; font-weight: 800; }
+        .reset-text { font-size: 14px; color: #718096; margin-bottom: 20px; }
     </style>
 </head>
 <body>
 
 <div class="login-box">
-    <h1>📖 Вход в 5 "А"</h1>
-    <input type="email" id="email" placeholder="Ваша почта">
-    <input type="password" id="password" placeholder="Пароль">
-    <button onclick="login()">Войти</button>
-    <button class="btn-link" onclick="resetPassword()">Забыли пароль?</button>
-    <div id="error-msg"></div>
+    <!-- БЛОК 1: ВХОД -->
+    <div id="login-section">
+        <h1>📖 Вход в 5 "А"</h1>
+        <input type="email" id="email" placeholder="Ваша почта">
+        <input type="password" id="password" placeholder="Пароль">
+        <button onclick="login()">Войти</button>
+        <button class="btn-link" onclick="showReset()">Забыли пароль?</button>
+        <div id="error-msg"></div>
+    </div>
+
+    <!-- БЛОК 2: СБРОС ПАРОЛЯ (Красивый) -->
+    <div id="reset-section">
+        <div class="reset-title">🔑 Восстановление</div>
+        <div class="reset-text">Введите почту, на которую зарегистрирован аккаунт, и мы отправим ссылку для сброса.</div>
+        <input type="email" id="reset-email" placeholder="Ваша почта">
+        <button onclick="resetPassword()">Отправить ссылку</button>
+        <button class="btn-link" onclick="hideReset()">← Назад ко входу</button>
+        <div id="reset-msg"></div>
+    </div>
 </div>
 
 <script type="module">
@@ -45,7 +65,7 @@
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
 
-    // АВТОМАТИЧЕСКИЙ ВХОД, ЕСЛИ ПАРОЛЬ УЖЕ СОХРАНЕН
+    // АВТОЛОГИН: Если уже вошел, сразу кидаем в журнал
     onAuthStateChanged(auth, (user) => {
         if (user) {
             window.location.href = "journal.html"; 
@@ -64,7 +84,7 @@
         }
 
         try {
-            await setPersistence(auth, browserLocalPersistence); // Запоминаем вход
+            await setPersistence(auth, browserLocalPersistence);
             await signInWithEmailAndPassword(auth, email, password);
             window.location.href = "journal.html"; 
         } catch (error) {
@@ -73,14 +93,42 @@
         }
     }
 
+    // ПЕРЕКЛЮЧЕНИЕ ЭКРАНОВ
+    window.showReset = function() {
+        document.getElementById('login-section').style.display = 'none';
+        document.getElementById('reset-section').style.display = 'block';
+    }
+
+    window.hideReset = function() {
+        document.getElementById('login-section').style.display = 'block';
+        document.getElementById('reset-section').style.display = 'none';
+        document.getElementById('reset-msg').style.display = 'none';
+    }
+
+    // ОТПРАВКА ПИСЬМА (Без уродливого окна)
     window.resetPassword = async function() {
-        const email = prompt("Введите вашу почту для сброса пароля:");
-        if (!email) return;
+        const email = document.getElementById('reset-email').value;
+        const msgDiv = document.getElementById('reset-msg');
+        
+        if (!email) {
+            msgDiv.style.display = 'block';
+            msgDiv.style.color = '#e53e3e';
+            msgDiv.style.background = '#ffebee';
+            msgDiv.innerText = "Введите почту!";
+            return;
+        }
+
         try {
             await sendPasswordResetEmail(auth, email);
-            alert("Письмо отправлено на " + email);
+            msgDiv.style.display = 'block';
+            msgDiv.style.color = '#38a169';
+            msgDiv.style.background = '#e8f5e9';
+            msgDiv.innerText = "Письмо отправлено! Проверьте вашу почту.";
         } catch (error) {
-            alert("Ошибка: проверьте почту.");
+            msgDiv.style.display = 'block';
+            msgDiv.style.color = '#e53e3e';
+            msgDiv.style.background = '#ffebee';
+            msgDiv.innerText = "Ошибка: проверьте правильность почты.";
         }
     }
 </script>
