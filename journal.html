@@ -97,6 +97,7 @@
         .toast { position: fixed; bottom: 30px; right: 30px; background: var(--primary); color: white; padding: 15px 25px; border-radius: 12px; font-weight: 700; box-shadow: var(--shadow); opacity: 0; transform: translateY(20px); transition: 0.3s; pointer-events: none; z-index: 1000; }
         .toast.show { opacity: 1; transform: translateY(0); }
 
+        /* АДАПТИВ ДЛЯ ТЕЛЕФОНОВ */
         @media (max-width: 1024px) { .seating-row { grid-template-columns: repeat(2, 1fr); } }
         @media (max-width: 768px) {
             .sidebar { width: 70px; }
@@ -107,6 +108,13 @@
             .date-nav { justify-content: space-between; }
             select { width: 100%; }
             .seating-row { grid-template-columns: 1fr; }
+            
+            /* Таблица превращается в карточки на телефоне */
+            th { display: none; }
+            td { display: block; border: none; padding: 5px 15px; text-align: left; }
+            tr { display: flex; flex-direction: column; border-bottom: 2px solid var(--border); padding: 15px 0; background: var(--card); margin-bottom: 10px; border-radius: 12px; position: relative; }
+            .grade-wrapper { margin-top: 10px; justify-content: flex-start; }
+            td:last-child { position: absolute; right: 10px; top: 10px; }
         }
     </style>
 </head>
@@ -126,7 +134,6 @@
 </div>
 
 <div class="main-content">
-    <!-- ЖУРНАЛ -->
     <div id="view-journal" class="view-section active">
         <div class="top-bar">
             <div class="date-nav">
@@ -171,7 +178,6 @@
         </div>
     </div>
 
-    <!-- ЧЕТВЕРТИ -->
     <div id="view-quarters" class="view-section">
         <div class="top-bar">
             <h2 style="color: var(--primary);"><i class="fa-solid fa-list-ol"></i> Итоговые оценки</h2>
@@ -203,7 +209,6 @@
         </div>
     </div>
 
-    <!-- ЗАМЕЧАНИЯ -->
     <div id="view-notes" class="view-section">
         <div class="top-bar">
             <h2 style="color: var(--primary);"><i class="fa-solid fa-comment-dots"></i> Замечания</h2>
@@ -231,7 +236,6 @@
         </div>
     </div>
 
-    <!-- РАСПИСАНИЕ -->
     <div id="view-schedule" class="view-section">
         <div class="top-bar">
             <h2 style="color: var(--primary);"><i class="fa-solid fa-calendar-days"></i> Расписание</h2>
@@ -240,7 +244,6 @@
         <div class="schedule-grid" id="schedule-list"></div>
     </div>
 
-    <!-- РАССАДКА -->
     <div id="view-seating" class="view-section">
         <div class="top-bar">
             <h2 style="color: var(--primary);"><i class="fa-solid fa-chair"></i> Рассадка (12 парт)</h2>
@@ -255,7 +258,7 @@
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyC1v7Ao25hITuwonTkD9e2CgQiu8BxrepI",
@@ -271,11 +274,10 @@
     const auth = getAuth(app);
     const docRef = doc(db, "journal", "class5a");
 
-    onAuthStateChanged(auth, (user) => { if (!user) { window.location.href = "index.html"; } });
+    // Убрали проверку onAuthStateChanged, чтобы тебя не выкидывало!
     window.logout = function() { signOut(auth).then(() => { window.location.href = "index.html"; }); }
 
     let students = ["Борисов Андрей", "Виноградов Артём", "Гуков Димитрий", "Григорьев Александр", "Гроховский Давид", "Прокофьев Денис", "Смороеский Евгений", "Макачёва Ульяна", "Кожеметёнов Ина", "Рахматулин Дамиил", "Остапук Маргарита", "Радьева Эмма"];
-    
     let grades = {}, absent = {}, notes = {}; 
     let currentSubject = "Математика", currentDate = new Date();
 
@@ -325,7 +327,6 @@
         renderNotes();
     }
 
-    // 1. Журнал
     window.renderTable = function() {
         const tbody = document.getElementById('table-body'); if(!tbody) return; tbody.innerHTML = '';
         const dateStr = getDateString(currentDate); let presentCount = 0, absentCount = 0;
@@ -346,7 +347,7 @@
                 <td>${index + 1}</td>
                 <td><div class="student-cell"><div class="avatar">${initials}</div><div class="student-name">${name}</div></div></td>
                 <td>
-                    <div style="display:flex; gap:5px; justify-content:center;">
+                    <div class="grade-wrapper" style="display:flex; gap:5px; justify-content:center;">
                         ${makeInput(grades[dayKey], dayKey)}
                         <button class="btn-n ${isAbsent ? 'active' : ''}" onclick="toggleAbsent('${dayKey}')">Н</button>
                     </div>
@@ -361,7 +362,6 @@
         document.getElementById('stat-absent').innerText = absentCount;
     }
 
-    // 2. Четверти
     window.renderQuarters = function() {
         const tbody = document.getElementById('quarters-body'); if(!tbody) return; tbody.innerHTML = '';
         const subj = document.getElementById('subject-quarters').value;
@@ -392,7 +392,6 @@
         });
     }
 
-    // 3. Замечания
     window.renderNotes = function() {
         const tbody = document.getElementById('notes-body'); if(!tbody) return; tbody.innerHTML = '';
         const subj = document.getElementById('subject-notes').value;
