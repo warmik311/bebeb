@@ -115,6 +115,18 @@
         .bar-fill.good { background: var(--grade-4); }
         .bar-fill.bad { background: var(--grade-2); }
 
+        /* Стили для бумажной сетки */
+        .paper-grid-table { width: max-content; border-collapse: collapse; }
+        .paper-grid-table th, .paper-grid-table td { border: 1px solid var(--border); padding: 0; height: 35px; min-width: 35px; text-align: center; }
+        .paper-grid-table th { background: #f8f9fa; font-size: 11px; font-weight: 700; color: var(--text-muted); padding: 5px; }
+        .paper-grid-table .name-col { position: sticky; left: 0; background: var(--card); z-index: 2; text-align: left; padding: 0 10px; font-weight: 700; min-width: 150px; border-right: 2px solid var(--primary); }
+        .paper-input { width: 100%; height: 100%; text-align: center; border: none; background: transparent; font-weight: 700; font-size: 14px; outline: none; padding: 0; }
+        .paper-input:focus { background: white; border: 2px solid var(--primary); }
+        .paper-input[value="5"] { color: var(--grade-5); background: rgba(56, 161, 105, 0.1); }
+        .paper-input[value="4"] { color: var(--grade-4); background: rgba(49, 130, 206, 0.1); }
+        .paper-input[value="3"] { color: var(--grade-3); background: rgba(214, 158, 46, 0.1); }
+        .paper-input[value="2"] { color: var(--grade-2); background: rgba(229, 62, 62, 0.1); }
+
         .toast { position: fixed; bottom: 30px; right: 30px; background: var(--primary); color: white; padding: 15px 25px; border-radius: 12px; font-weight: 700; box-shadow: var(--shadow); opacity: 0; transform: translateY(20px); transition: 0.3s; pointer-events: none; z-index: 1000; }
         .toast.show { opacity: 1; transform: translateY(0); }
 
@@ -128,11 +140,6 @@
             .date-nav { justify-content: space-between; }
             select, input[type="text"], input[type="date"] { width: 100%; }
             .seating-row { grid-template-columns: 1fr; }
-            th { display: none; }
-            td { display: block; border: none; padding: 5px 15px; text-align: left; }
-            tr { display: flex; flex-direction: column; border-bottom: 2px solid var(--border); padding: 15px 0; background: var(--card); margin-bottom: 10px; border-radius: 12px; position: relative; }
-            .grade-wrapper { margin-top: 10px; justify-content: flex-start; }
-            td:last-child { position: absolute; right: 10px; top: 10px; }
         }
     </style>
 </head>
@@ -145,15 +152,15 @@
     </div>
     <div class="nav-item active" onclick="showTab('dashboard', this)"><i class="fa-solid fa-house"></i> <span>Дашборд</span></div>
     <div class="nav-item" onclick="showTab('profile', this)"><i class="fa-solid fa-user"></i> <span>Профиль</span></div>
-    <div class="nav-item" onclick="showTab('diary', this)"><i class="fa-solid fa-pen-to-square"></i> <span>Дневник</span></div>
     <div class="nav-item" onclick="showTab('journal', this)"><i class="fa-solid fa-book"></i> <span>Журнал</span></div>
+    <div class="nav-item" onclick="showTab('paper_grid', this)"><i class="fa-solid fa-table-cells"></i> <span>Бумажный журнал</span></div>
+    <div class="nav-item" onclick="showTab('diary', this)"><i class="fa-solid fa-pen-to-square"></i> <span>Дневник</span></div>
     <div class="nav-item" onclick="showTab('quarters', this)"><i class="fa-solid fa-list-ol"></i> <span>Четверти</span></div>
     <div class="nav-item" onclick="showTab('notes', this)"><i class="fa-solid fa-comment-dots"></i> <span>Замечания</span></div>
     <div class="nav-item" onclick="showTab('stats', this)"><i class="fa-solid fa-chart-simple"></i> <span>Статистика</span></div>
     <div class="nav-item" onclick="showTab('schedule', this)"><i class="fa-solid fa-calendar-days"></i> <span>Расписание</span></div>
     <div class="nav-item" onclick="showTab('events', this)"><i class="fa-solid fa-calendar-check"></i> <span>События</span></div>
     <div class="nav-item" onclick="showTab('achievements', this)"><i class="fa-solid fa-trophy"></i> <span>Достижения</span></div>
-    <div class="nav-item" onclick="showTab('birthdays', this)"><i class="fa-solid fa-cake-candles"></i> <span>Дни рождения</span></div>
     <div class="nav-item" onclick="showTab('teachers', this)"><i class="fa-solid fa-chalkboard-user"></i> <span>Учителя</span></div>
     <div class="nav-item" onclick="showTab('seating', this)"><i class="fa-solid fa-chair"></i> <span>Рассадка</span></div>
     <div class="nav-item" onclick="showTab('holidays', this)"><i class="fa-solid fa-umbrella-beach"></i> <span>Каникулы</span></div>
@@ -174,10 +181,6 @@
                 <h3><i class="fa-solid fa-clock"></i> Сейчас по расписанию</h3>
                 <p><strong>День:</strong> <span id="dash-today"></span></p>
                 <p><strong>Урок:</strong> <span id="dash-lesson">Загрузка...</span></p>
-                <div style="margin-top: 15px; display: flex; gap: 10px; flex-wrap: wrap;">
-                    <button class="btn-add" style="flex:1; padding:10px;" onclick="randomStudent()"><i class="fa-solid fa-shuffle"></i> Случайный ученик</button>
-                    <button class="btn-add" style="flex:1; padding:10px; background: #28a745;" onclick="exportToCSV()"><i class="fa-solid fa-file-excel"></i> Экспорт в Excel</button>
-                </div>
             </div>
             <div class="dash-card">
                 <h3><i class="fa-solid fa-bullhorn"></i> Объявление</h3>
@@ -208,13 +211,26 @@
         </div>
     </div>
 
-    <!-- ДНЕВНИК -->
-    <div id="view-diary" class="view-section">
+    <!-- БУМАЖНЫЙ ЖУРНАЛ -->
+    <div id="view-paper_grid" class="view-section">
         <div class="top-bar">
-            <h2 style="color: var(--primary);"><i class="fa-solid fa-pen-to-square"></i> Дневник (Домашние задания)</h2>
-            <button class="btn-add" id="btn-save-diary" onclick="saveDiary()"><i class="fa-solid fa-floppy-disk"></i> Сохранить всё</button>
+            <h2 style="color: var(--primary);"><i class="fa-solid fa-table-cells"></i> Бумажный журнал</h2>
+            <select id="paper-subject" onchange="renderPaperGrid()">
+                <option value="Математика">Математика</option>
+                <option value="Русский язык">Русский язык</option>
+                <option value="Белорусский язык">Белорусский язык</option>
+                <option value="Физкультура">Физкультура</option>
+                <option value="Трудовое обучение">Трудовое обучение</option>
+                <option value="ОБЖ">ОБЖ</option>
+                <option value="Классный час">Классный час</option>
+            </select>
         </div>
-        <div class="diary-grid" id="diary-grid"></div>
+        <div class="table-card" style="overflow-x: auto;">
+            <table class="paper-grid-table">
+                <thead id="paper-thead"></thead>
+                <tbody id="paper-tbody"></tbody>
+            </table>
+        </div>
     </div>
 
     <!-- ЖУРНАЛ -->
@@ -263,6 +279,15 @@
             <input type="text" class="input-new" id="new-name" placeholder="Введите Фамилию и Имя...">
             <button class="btn-add" onclick="addStudent()">Добавить</button>
         </div>
+    </div>
+
+    <!-- ДНЕВНИК -->
+    <div id="view-diary" class="view-section">
+        <div class="top-bar">
+            <h2 style="color: var(--primary);"><i class="fa-solid fa-pen-to-square"></i> Дневник (Домашние задания)</h2>
+            <button class="btn-add" id="btn-save-diary" onclick="saveDiary()"><i class="fa-solid fa-floppy-disk"></i> Сохранить всё</button>
+        </div>
+        <div class="diary-grid" id="diary-grid"></div>
     </div>
 
     <!-- ЧЕТВЕРТИ -->
@@ -494,7 +519,6 @@
     let isTeacher = false;
     let viewAsParent = false;
 
-    // ТУТ МЫ ДОБАВИЛИ НОВУЮ ПОЧТУ В СПИСОК УЧИТЕЛЕЙ
     onAuthStateChanged(auth, (user) => {
         if (user) {
             if (user.email === "d41859218@gmail.com" || user.email === "arinaarina52asd@gmail.com" || user.email === "TEST@parent.local" || user.email.includes("teacher")) {
@@ -523,7 +547,7 @@
         document.querySelectorAll('.btn-del').forEach(btn => btn.style.display = canEdit ? '' : 'none');
         
         document.querySelectorAll('input, textarea, select').forEach(el => {
-            if (el.id !== 'subject' && el.id !== 'subject-quarters' && el.id !== 'subject-notes' && el.id !== 'search-student') {
+            if (el.id !== 'subject' && el.id !== 'subject-quarters' && el.id !== 'subject-notes' && el.id !== 'search-student' && el.id !== 'paper-subject') {
                 el.disabled = !canEdit;
             }
         });
@@ -604,7 +628,43 @@
         renderDiary();
         renderEvents();
         renderAchievements();
+        renderPaperGrid();
         document.getElementById('dash-students').innerText = students.length;
+    }
+
+    // БУМАЖНАЯ СЕТКА
+    window.renderPaperGrid = function() {
+        const thead = document.getElementById('paper-thead');
+        const tbody = document.getElementById('paper-tbody');
+        const subj = document.getElementById('paper-subject').value;
+        
+        if(!thead || !tbody) return;
+
+        // Шапка с 40 колонками
+        let headHtml = '<tr><th class="name-col">Ученик</th>';
+        for (let i = 1; i <= 40; i++) {
+            headHtml += `<th>${i}</th>`;
+        }
+        headHtml += '</tr>';
+        thead.innerHTML = headHtml;
+
+        // Тело с учениками
+        let bodyHtml = '';
+        students.forEach((name, sIndex) => {
+            bodyHtml += `<tr><td class="name-col">${sIndex + 1}. ${name}</td>`;
+            for (let i = 1; i <= 40; i++) {
+                const key = `PAPER_${subj}_${name}_${i}`;
+                const val = grades[key] || '';
+                bodyHtml += `<td><input type="text" class="paper-input" maxlength="1" value="${val}" oninput="updatePaperGrade('${key}', this.value)"></td>`;
+            }
+            bodyHtml += '</tr>';
+        });
+        tbody.innerHTML = bodyHtml;
+    }
+
+    window.updatePaperGrade = function(key, value) {
+        grades[key] = value;
+        saveToCloud();
     }
 
     window.renderDiary = function() {
@@ -681,31 +741,6 @@
         saveToCloud();
     }
     window.saveDiary = function() { saveToCloud(); showToast(); }
-
-    window.randomStudent = function() {
-        const randomIndex = Math.floor(Math.random() * students.length);
-        alert("Выбран ученик: " + students[randomIndex]);
-    }
-
-    window.exportToCSV = function() {
-        let csv = "Ученик;Предмет;Оценка\n";
-        for (let key in grades) {
-            if (grades[key]) {
-                const parts = key.split('_');
-                const name = parts[2];
-                const subj = parts[1];
-                csv += `${name};${subj};${grades[key]}\n`;
-            }
-        }
-        const blob = new Blob(["\uFEFF" + csv], { type: 'text/csv;charset=utf-8;' });
-        const link = document.createElement("a");
-        const url = URL.createObjectURL(blob);
-        link.setAttribute("href", url);
-        link.setAttribute("download", "journal.csv");
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-    }
 
     window.searchStudents = function() {
         const query = document.getElementById('search-student').value.toLowerCase();
@@ -869,6 +904,7 @@
         if (tabName === 'diary') renderDiary();
         if (tabName === 'events') renderEvents();
         if (tabName === 'achievements') renderAchievements();
+        if (tabName === 'paper_grid') renderPaperGrid();
     }
 
     window.renderSchedule = function() {
